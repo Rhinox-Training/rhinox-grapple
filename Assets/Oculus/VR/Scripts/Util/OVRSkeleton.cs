@@ -593,7 +593,7 @@ public class OVRBoneCapsule
 {
 	public short BoneIndex { get; set; }
 	public Rigidbody CapsuleRigidbody { get; set; }
-	public CapsuleCollider BoneColliderData { get; set; }
+	public CapsuleCollider CapsuleCollider { get; set; }
 
 	public OVRBoneCapsule() { }
 
@@ -604,5 +604,3 @@ public class OVRBoneCapsule
 		CapsuleCollider = capsuleCollider;
 	}
 }
-
-

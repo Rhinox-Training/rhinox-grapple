@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.XR;
 
 namespace Rhinox.Grappler.BoneManagement
 {
@@ -37,7 +37,7 @@ namespace Rhinox.Grappler.BoneManagement
     public class BoneManager : MonoBehaviour
     {
         #region Singleton
-        private BoneManager(){}
+        private BoneManager() { }
         private static BoneManager _instance;
         public static BoneManager Instance
         {
@@ -63,6 +63,9 @@ namespace Rhinox.Grappler.BoneManagement
 
         private List<RhinoxBone> _leftHandBones = new List<RhinoxBone>();
         private List<RhinoxBone> _rightHandBones = new List<RhinoxBone>();
+
+        private bool _isLeftHandInitialised = false;
+        private bool _isRightHandInitialised = false;
 
         public void ClearBones(Hand hand)
         {
@@ -98,11 +101,20 @@ namespace Rhinox.Grappler.BoneManagement
             }
         }
 
-        public void AddBones(Hand hand, List<RhinoxBone> bones)
+        private void AddBones(Hand hand, List<RhinoxBone> bones)
         {
             foreach (var bone in bones)
             {
                 AddBone(hand, bone);
+            }
+        }
+
+        public void GetBonesFromCouplerService(bool refreshBoneList = true)
+        {
+            if (refreshBoneList)
+            {
+                _leftHandBones.Clear();
+                _rightHandBones.Clear();
             }
         }
 
