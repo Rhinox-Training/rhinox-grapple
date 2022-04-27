@@ -8,6 +8,8 @@ namespace Rhinox.Grappler.BoneManagement
     {
         void Initialise(GameObject controllerParent);
         bool GetIsInitialised();
+        bool TryLoadBones();
+        bool GetAreBonesLoaded();
         List<RhinoxBone> GetBones(Hand hand);
     }
 }

@@ -15,27 +15,35 @@ namespace Rhinox.Grappler.BoneManagement
         private GameObject _controllerParent = null;
 
         private bool _isInitialised = false;
+        private bool _areBonesLoaded = false;
 
-
-        public void Initialise(GameObject controllerParent)
+        void IBoneService.Initialise(GameObject controllerParent)
         {
             if (controllerParent == null)
             {
-                Debug.Log("Rhinox.Grappler.Bonemanagement.IBoneService.Initialise() : Controller parent cannot be null");
+                Debug.LogError("Rhinox.Grappler.Bonemanagement.UnityXRBoneService.Initialise() : Controller parent cannot be null");
                 return;
             }
-
-            Thread InitialiseThread = new Thread(new ThreadStart(Coroutine_Initialise));
-            InitialiseThread.Start();
-
+            _controllerParent = controllerParent;
+            _isInitialised = true;
         }
 
-        private void Coroutine_Initialise()
+        bool IBoneService.GetIsInitialised()
         {
+            return _isInitialised;
+        }
 
-            // NOTE: this is not very optimised at all
-            var temp = _controllerParent.GetComponentsInChildren<OVRSkeleton>();
-            foreach (var skeleton in temp)
+        bool IBoneService.TryLoadBones()
+        {
+            _areBonesLoaded = false;
+
+            var skeletons = _controllerParent.GetComponentsInChildren<OVRSkeleton>();
+            foreach (var skeleton in skeletons)
+            {
+                if (!skeleton.IsInitialized)
+                    return false;
+            }
+            foreach (var skeleton in skeletons)
             {
                 var type = skeleton.GetSkeletonType();
                 switch (type)
@@ -47,27 +55,65 @@ namespace Rhinox.Grappler.BoneManagement
                         _skeletonRefRightHand = skeleton;
                         break;
                     default:
-                        Debug.Log("Rhinox.Grappler.Bonemanagement.IBoneService.Coroutine_Initialise() : Cannot determine hand type");
-                        return;
+                        Debug.LogError("Rhinox.Grappler.Bonemanagement.UnityXRBoneService.TryLoadBones() : Cannot determine hand type");
+                        return false;
                 }
             }
-            _isInitialised = true;
+            Debug.Log("Rhinox.Grappler.Bonemanagement.UnityXRBoneService.TryLoadBones() : OVRSkeletons loaded in");
+            
+            _areBonesLoaded = true;
+            return true;
         }
 
-        public bool GetIsInitialised()
+        bool IBoneService.GetAreBonesLoaded()
         {
-
-
-            return false;
+            return _areBonesLoaded;
         }
 
-        public List<RhinoxBone> GetBones(Hand hand)
+        List<RhinoxBone> IBoneService.GetBones(Hand hand)
         {
             List<RhinoxBone> retVal = new List<RhinoxBone>();
-
-
+            switch (hand)
+            {
+                case Hand.Left:
+                    for (int i = 0; i < _skeletonRefLeftHand.Bones.Count; i++)
+                    {
+                        retVal.Add(new RhinoxBone(
+                            _skeletonRefLeftHand.Bones[i].Id.ToString(),
+                            _skeletonRefLeftHand.Bones[i].Transform,
+                            null));
+                    }
+                    break;
+                case Hand.Right:
+                    for (int i = 0; i < _skeletonRefRightHand.Bones.Count; i++)
+                    {
+                        retVal.Add(new RhinoxBone(
+                            _skeletonRefRightHand.Bones[i].Id.ToString(),
+                            _skeletonRefRightHand.Bones[i].Transform,
+                            null));
+                    }
+                    break;
+                case Hand.Both:
+                    for (int i = 0; i < _skeletonRefLeftHand.Bones.Count; i++)
+                    {
+                        retVal.Add(new RhinoxBone(
+                            _skeletonRefLeftHand.Bones[i].Id.ToString(),
+                            _skeletonRefLeftHand.Bones[i].Transform,
+                            null));
+                    }
+                    for (int i = 0; i < _skeletonRefRightHand.Bones.Count; i++)
+                    {
+                        retVal.Add(new RhinoxBone(
+                            _skeletonRefRightHand.Bones[i].Id.ToString(),
+                            _skeletonRefRightHand.Bones[i].Transform,
+                            null));
+                    }
+                    break;
+            }
             return retVal;
         }
+
+
     }
 }
 

@@ -36,36 +36,43 @@ namespace Rhinox.Grappler.BoneManagement
     /// </summary>
     public class BoneManager : MonoBehaviour
     {
-        #region Singleton
-        private BoneManager() { }
-        private static BoneManager _instance;
-        public static BoneManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new BoneManager();
-                    _instance.Initialize();
-                }
-                return _instance;
-            }
-            private set
-            {
-                _instance = value;
-            }
-        }
-        private void Initialize()
-        {
-            ClearBones(Hand.Both);
-        }
-        #endregion Singleton
+
+        [SerializeField] private IBoneService _boneConvertorService = new UnityXRBoneService();
 
         private List<RhinoxBone> _leftHandBones = new List<RhinoxBone>();
         private List<RhinoxBone> _rightHandBones = new List<RhinoxBone>();
 
         private bool _isLeftHandInitialised = false;
         private bool _isRightHandInitialised = false;
+
+
+        #region Singleton
+        public static BoneManager Instance { get; private set; }
+        private void Awake()
+        {
+
+            if (Instance != null && Instance != this)
+            {
+                Destroy(this);
+            }
+            else
+            {
+                Instance = this;
+            }
+            Initialize();
+        }
+        private void Initialize()
+        {
+            ClearBones(Hand.Both);
+            _boneConvertorService.Initialise(this.gameObject);
+        }
+        #endregion Singleton
+
+        private void Update()
+        {
+            if (_boneConvertorService.GetIsInitialised() && !_boneConvertorService.GetAreBonesLoaded())
+                _boneConvertorService.TryLoadBones();
+        }
 
         public void ClearBones(Hand hand)
         {
@@ -101,7 +108,7 @@ namespace Rhinox.Grappler.BoneManagement
             }
         }
 
-        private void AddBones(Hand hand, List<RhinoxBone> bones)
+        public void AddBones(Hand hand, List<RhinoxBone> bones)
         {
             foreach (var bone in bones)
             {
@@ -109,17 +116,9 @@ namespace Rhinox.Grappler.BoneManagement
             }
         }
 
-        public void GetBonesFromCouplerService(bool refreshBoneList = true)
-        {
-            if (refreshBoneList)
-            {
-                _leftHandBones.Clear();
-                _rightHandBones.Clear();
-            }
-        }
-
         public List<RhinoxBone> GetRhinoxBones(Hand hand)
         {
+            GetBonesFromCouplerService();
             switch (hand)
             {
                 case Hand.Left:
@@ -131,6 +130,22 @@ namespace Rhinox.Grappler.BoneManagement
             }
             return null;
         }
+
+        private void GetBonesFromCouplerService(bool refreshBoneList = true)
+        {
+            if (!_boneConvertorService.GetAreBonesLoaded())
+                return;
+
+            if (refreshBoneList)
+            {
+                _leftHandBones.Clear();
+                _rightHandBones.Clear();
+            }
+
+            _leftHandBones = _boneConvertorService.GetBones(Hand.Left);
+            _rightHandBones = _boneConvertorService.GetBones(Hand.Right);
+        }
+
     }
 }
 

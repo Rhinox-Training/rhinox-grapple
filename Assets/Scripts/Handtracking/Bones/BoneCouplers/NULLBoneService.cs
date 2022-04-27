@@ -10,6 +10,8 @@ namespace Rhinox.Grappler.BoneManagement
 		public bool GetIsInitialised() { return false; }
 		public List<RhinoxBone> GetBones(Hand hand) { return null; }
 
-		
-	}
+        public bool TryLoadBones() {  return false; }
+
+        public bool GetAreBonesLoaded() {  return false;  }
+    }
 }
