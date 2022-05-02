@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.XR;
+using UnityEngine.Events;
 
 namespace Rhinox.Grappler.BoneManagement
 {
@@ -37,41 +38,30 @@ namespace Rhinox.Grappler.BoneManagement
     public class BoneManager : MonoBehaviour
     {
 
-        [SerializeField] private IBoneService _boneConvertorService = new UnityXRBoneService();
+        private IBoneService _boneConvertorService = new NULLBoneService();
 
         private List<RhinoxBone> _leftHandBones = new List<RhinoxBone>();
         private List<RhinoxBone> _rightHandBones = new List<RhinoxBone>();
 
-        private bool _isLeftHandInitialised = false;
-        private bool _isRightHandInitialised = false;
-
-
-        #region Singleton
-        public static BoneManager Instance { get; private set; }
-        private void Awake()
-        {
-
-            if (Instance != null && Instance != this)
-            {
-                Destroy(this);
-            }
-            else
-            {
-                Instance = this;
-            }
-            Initialize();
-        }
-        private void Initialize()
-        {
-            ClearBones(Hand.Both);
-            _boneConvertorService.Initialise(this.gameObject);
-        }
-        #endregion Singleton
+        public bool IsInitialised { get; private set; } = false;
+        public UnityEvent onIsInitialised = new UnityEvent();
 
         private void Update()
         {
             if (_boneConvertorService.GetIsInitialised() && !_boneConvertorService.GetAreBonesLoaded())
                 _boneConvertorService.TryLoadBones();
+            else if(_boneConvertorService.GetIsInitialised() && !IsInitialised)
+            {
+                GetBonesFromCouplerService();
+                IsInitialised = true;
+                onIsInitialised.Invoke();
+            }
+        }
+
+        public void SetBoneConvertorService(IBoneService newService)
+        {
+            _boneConvertorService = newService;
+            _boneConvertorService.Initialise(this.gameObject);
         }
 
         public void ClearBones(Hand hand)
@@ -126,16 +116,13 @@ namespace Rhinox.Grappler.BoneManagement
                 case Hand.Right:
                     return _rightHandBones;
                 case Hand.Both:
-                    return null;
+                    return _leftHandBones.Concat(_rightHandBones).ToList();
             }
             return null;
         }
 
         private void GetBonesFromCouplerService(bool refreshBoneList = true)
         {
-            if (!_boneConvertorService.GetAreBonesLoaded())
-                return;
-
             if (refreshBoneList)
             {
                 _leftHandBones.Clear();
