@@ -21,13 +21,13 @@ namespace Rhinox.Grappler.BoneManagement
     {
         public string Name { get; private set; } = null;
         public Transform BoneTransform { get; private set; } = null;
-        public CapsuleCollider BoneCollisionCapsule { get; private set; } = null;
+        public List<CapsuleCollider> BoneCollisionCapsules { get; private set; } = null;
 
-        public RhinoxBone(string boneName, Transform boneTransform, CapsuleCollider boneCollisionCapsule)
+        public RhinoxBone(string boneName, Transform boneTransform, List<CapsuleCollider> boneCollisionCapsules)
         {
             Name = boneName;
             BoneTransform = boneTransform;
-            BoneCollisionCapsule = boneCollisionCapsule;
+            BoneCollisionCapsules = boneCollisionCapsules;
         }
     }
 
@@ -108,7 +108,11 @@ namespace Rhinox.Grappler.BoneManagement
 
         public List<RhinoxBone> GetRhinoxBones(Hand hand)
         {
-            GetBonesFromCouplerService();
+            if (_leftHandBones.Count == 0 || _rightHandBones.Count == 0)
+            {
+                Debug.Log("Rhinox.Grappler.Bonemanagement.BoneManager.GetRhinoxBones() : Re-Getting bones from coupler service");
+                GetBonesFromCouplerService();
+            }
             switch (hand)
             {
                 case Hand.Left:

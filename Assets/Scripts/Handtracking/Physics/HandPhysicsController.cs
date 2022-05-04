@@ -30,7 +30,7 @@ namespace Rhinox.Grappler
 
         private void SetupPhysicServices()
         {
-            _physicsServices.Add(new HandPhysics.ProxyPhysics());
+            _physicsServices.Add(new HandPhysics.ContactPointBasedPhysics());
 
             foreach (var physicsService in _physicsServices)
             {

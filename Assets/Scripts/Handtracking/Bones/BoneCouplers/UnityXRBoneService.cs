@@ -81,7 +81,7 @@ namespace Rhinox.Grappler.BoneManagement
                         retVal.Add(new RhinoxBone(
                             _skeletonRefLeftHand.Bones[i].Id.ToString(),
                             _skeletonRefLeftHand.Bones[i].Transform,
-                            FindCorrespondingColliderCapsule(_skeletonRefLeftHand, i)));
+                            FindCorrespondingColliderCapsules(_skeletonRefLeftHand, i)));
                     }
                     break;
                 case Hand.Right:
@@ -90,7 +90,7 @@ namespace Rhinox.Grappler.BoneManagement
                         retVal.Add(new RhinoxBone(
                             _skeletonRefRightHand.Bones[i].Id.ToString(),
                             _skeletonRefRightHand.Bones[i].Transform,
-                            FindCorrespondingColliderCapsule(_skeletonRefRightHand, i)));
+                            FindCorrespondingColliderCapsules(_skeletonRefRightHand, i)));
                     }
                     break;
                 case Hand.Both:
@@ -99,30 +99,29 @@ namespace Rhinox.Grappler.BoneManagement
                         retVal.Add(new RhinoxBone(
                             _skeletonRefLeftHand.Bones[i].Id.ToString(),
                             _skeletonRefLeftHand.Bones[i].Transform,
-                            FindCorrespondingColliderCapsule(_skeletonRefLeftHand, i)));
+                            FindCorrespondingColliderCapsules(_skeletonRefLeftHand, i)));
                     }
                     for (int i = 0; i < _skeletonRefRightHand.Bones.Count; i++)
                     {
                         retVal.Add(new RhinoxBone(
                             _skeletonRefRightHand.Bones[i].Id.ToString(),
                             _skeletonRefRightHand.Bones[i].Transform,
-                            FindCorrespondingColliderCapsule(_skeletonRefRightHand, i)));
+                            FindCorrespondingColliderCapsules(_skeletonRefRightHand, i)));
                     }
                     break;
             }
             return retVal;
         }
 
-        private CapsuleCollider FindCorrespondingColliderCapsule(OVRSkeleton skeleton, int i)
+        private List<CapsuleCollider> FindCorrespondingColliderCapsules(OVRSkeleton skeleton, int i)
         {
-            CapsuleCollider retVal = null;
+            List<CapsuleCollider> retVal = new List<CapsuleCollider>();
 
             foreach (var capsule in skeleton.Capsules)
             {
                 if (capsule.BoneIndex == i)
                 {
-                    retVal = capsule.CapsuleCollider;
-                    break;
+                    retVal.Add(capsule.CapsuleCollider);
                 }
             }
             return retVal;

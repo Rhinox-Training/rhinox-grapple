@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Rhinox.Grappler.BoneManagement;
-using UnityEditor;
+using System;
 
 namespace Rhinox.Grappler.HandPhysics
 {
@@ -14,7 +14,6 @@ namespace Rhinox.Grappler.HandPhysics
             public bool IsInitialised { get; private set; } = false;
             private bool _prevState = false;
             private RhinoxBone _rhinoxBone = null;
-
             private LayerMask _collisionLayer = 0;
 
             // proxy object
@@ -30,7 +29,12 @@ namespace Rhinox.Grappler.HandPhysics
             private Joint _connectionJoint = null;
 
 
-
+            /// <summary>
+            /// The proxy object class is there to handle the dummy and proxy object,
+            /// handles the creation and management of them
+            /// </summary>
+            /// <param name="bone"></param>
+            /// <param name="collisionLayer"></param>
             public ProxyObject(RhinoxBone bone, LayerMask collisionLayer)
             {
                 _rhinoxBone = bone;
@@ -42,7 +46,7 @@ namespace Rhinox.Grappler.HandPhysics
 
             private void Initialise()
             {
-                if (!_rhinoxBone.BoneCollisionCapsule)
+                if (_rhinoxBone.BoneCollisionCapsules.Count <= 0)
                 {
                     GameObject.Destroy(_proxyObject);
                     GameObject.Destroy(_dummyObject);
@@ -58,8 +62,9 @@ namespace Rhinox.Grappler.HandPhysics
 
             public void Rebuild()
             {
-                if (!_rhinoxBone.BoneCollisionCapsule)
+                if (_rhinoxBone.BoneCollisionCapsules.Count <= 0)
                     return;
+
                 Debug.Log("Rebuilding");
 
                 GameObject.Destroy(_proxyObject);
@@ -69,7 +74,9 @@ namespace Rhinox.Grappler.HandPhysics
                 SetCollisionLayer();
             }
 
-
+            /// <summary>
+            /// creates and assigns a dummy object with the correct settings
+            /// </summary>
             private void BuildDummyObject()
             {
                 // disabling object to disable physics
@@ -82,8 +89,8 @@ namespace Rhinox.Grappler.HandPhysics
                 _dummyObjectRigidBody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
                 _dummyObjectRigidBody.ResetInertiaTensor();
 
-                _dummyObject.transform.parent = _rhinoxBone.BoneCollisionCapsule.transform;
-                _dummyObject.transform.rotation = _rhinoxBone.BoneCollisionCapsule.transform.rotation;
+                _dummyObject.transform.parent = _rhinoxBone.BoneCollisionCapsules[0].transform;
+                _dummyObject.transform.rotation = _rhinoxBone.BoneCollisionCapsules[0].transform.rotation;
                 _dummyObject.transform.localPosition = new Vector3(0, 0, 0);
 
 
@@ -92,6 +99,10 @@ namespace Rhinox.Grappler.HandPhysics
                 _dummyObject.SetActive(true);
             }
 
+
+            /// <summary>
+            /// creates and assigns a proxy object with the correct settings
+            /// </summary>
             private void BuildProxyObject()
             {
                 // disabling object to disable physics
@@ -102,13 +113,15 @@ namespace Rhinox.Grappler.HandPhysics
 
                 // needs to be made without editor scripts
                 _proxyObjectCapsuleCollider = _proxyObject.AddComponent<CapsuleCollider>();
-                var jsonRhinBoCaCo = EditorJsonUtility.ToJson(_rhinoxBone.BoneCollisionCapsule);
-                EditorJsonUtility.FromJsonOverwrite(jsonRhinBoCaCo, _proxyObjectCapsuleCollider);
+                CopyCapsuleColliderValues(_proxyObjectCapsuleCollider, _rhinoxBone.BoneCollisionCapsules[0]);
                 _proxyObjectCapsuleCollider.isTrigger = false;
                 _proxyObjectCapsuleCollider.enabled = true;
 
-                // disable old BoneCollisionCapsule
-                _rhinoxBone.BoneCollisionCapsule.enabled = false;
+                // disable old BoneCollisionCapsules
+                foreach (var boneCollisionCapsule in _rhinoxBone.BoneCollisionCapsules)
+                {
+                    boneCollisionCapsule.isTrigger = true;
+                }
 
                 _proxyObjectRigidBody = _proxyObject.AddComponent<Rigidbody>();
                 _proxyObjectRigidBody.isKinematic = false;
@@ -123,6 +136,18 @@ namespace Rhinox.Grappler.HandPhysics
 
                 // re-enable object to enable physics
                 _proxyObject.SetActive(true);
+            }
+
+            private void CopyCapsuleColliderValues(CapsuleCollider to, CapsuleCollider from)
+            {
+                to.contactOffset = from.contactOffset;
+                to.direction = from.direction;
+                to.enabled = from.enabled;
+                to.height = from.height;
+                to.radius = from.radius;
+                to.isTrigger = from.isTrigger;
+                to.material = from.material;
+                to.center = from.center;
             }
 
             public void Update()
