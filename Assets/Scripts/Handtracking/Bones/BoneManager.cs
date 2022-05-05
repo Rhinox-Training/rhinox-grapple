@@ -64,6 +64,11 @@ namespace Rhinox.Grappler.BoneManagement
             _boneConvertorService.Initialise(this.gameObject);
         }
 
+        public IBoneService GetBoneConvertorService()
+        {
+            return _boneConvertorService;
+        }
+
         public void ClearBones(Hand hand)
         {
             switch (hand)

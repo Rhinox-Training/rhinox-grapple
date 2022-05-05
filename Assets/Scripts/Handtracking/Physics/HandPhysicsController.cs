@@ -8,6 +8,7 @@ namespace Rhinox.Grappler
     public class HandPhysicsController : MonoBehaviour
     {
         private List<HandPhysics.IPhysicsService> _physicsServices = new List<HandPhysics.IPhysicsService>();
+        [SerializeField] private Recognition.BaseRecognitionService _recognitionService = null;
         private BoneManagement.BoneManager _boneManager = null;
 
         [SerializeField] private LayerMask _handLayer = 0;
@@ -24,6 +25,7 @@ namespace Rhinox.Grappler
             _boneManager = this.GetComponent<BoneManagement.BoneManager>();
            
             _boneManager.onIsInitialised.AddListener(SetupPhysicServices);
+            _boneManager.onIsInitialised.AddListener(SetupRecognitionService);
             _boneManager.SetBoneConvertorService(new BoneManagement.UnityXRBoneService());
 
         }
@@ -42,6 +44,14 @@ namespace Rhinox.Grappler
 
             IsInitialised = true;
         }
+
+        private void SetupRecognitionService()
+        {
+            _recognitionService = new Recognition.OculusRecognitionService();
+            _recognitionService.Initialise(_boneManager);
+            _recognitionService.SetEnabled(true);
+        }
+
 
         private void SetupLayerCollisions()
         {

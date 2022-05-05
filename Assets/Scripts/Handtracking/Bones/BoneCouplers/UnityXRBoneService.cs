@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -111,6 +112,34 @@ namespace Rhinox.Grappler.BoneManagement
                     break;
             }
             return retVal;
+        }
+
+        public List<OVRBone> GetOculusBones(Hand hand)
+        {
+            switch (hand)
+            {
+                case Hand.Left:
+                    return new List<OVRBone>(_skeletonRefLeftHand.Bones);
+                case Hand.Right:
+                    return new List<OVRBone> (_skeletonRefRightHand.Bones);
+                case Hand.Both:
+                    return new List<OVRBone>((_skeletonRefLeftHand.Bones).Concat(_skeletonRefRightHand.Bones));
+            }
+            return null;
+        }
+
+        public OVRSkeleton GetOculusSkeleton(Hand hand)
+        {
+            switch (hand)
+            {
+                case Hand.Left:
+                    return _skeletonRefLeftHand;
+                case Hand.Right:
+                    return _skeletonRefRightHand;
+                case Hand.Both:
+                    return null;
+            }
+            return null;
         }
 
         private List<CapsuleCollider> FindCorrespondingColliderCapsules(OVRSkeleton skeleton, int i)
