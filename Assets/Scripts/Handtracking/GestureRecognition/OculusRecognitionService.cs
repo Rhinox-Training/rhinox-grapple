@@ -19,11 +19,19 @@ namespace Rhinox.Grappler.Recognition
             HandleSaving();
             if (IsInitialised && IsEnabled)
             {
-                HandleRecognition(ref LeftHandGestures, _unityBoneService.GetOculusSkeleton(Hand.Left),Hand.Left);
+                HandleRecognition(ref LeftHandGestures, _unityBoneService.GetOculusSkeleton(Hand.Left), Hand.Left);
                 HandleRecognition(ref RightHandGestures, _unityBoneService.GetOculusSkeleton(Hand.Right), Hand.Right);
 
             }
         }
+
+        /// <summary>
+        /// This function solely exists to create new gestures during runtime,
+        /// To use this: Click the save booleans to save the current gesture, when you are done adding gestures
+        /// do not stop the play simulation, first copy this component and past it when you exit the play mode to keep the 
+        /// gesture data
+        /// (I know it is very fucked up to use rn but don't worry. soon TM there will be a better way to do this I swear)
+        /// </summary>
         private void HandleSaving()
         {
             if (_saveLeftPose)
@@ -59,6 +67,13 @@ namespace Rhinox.Grappler.Recognition
             }
         }
 
+
+        /// <summary>
+        /// Goes over all currently known gestures in the system and finds the one that matches the best whilst keeping a detection treshholdin mind
+        /// </summary>
+        /// <param name="gestures">Possible gestures that cna be detected</param>
+        /// <param name="skeleton">Skeleton parent of the bones</param>
+        /// <param name="handedness">Which hand is it</param>
         private void HandleRecognition(ref List<RhinoxGesture> gestures, OVRSkeleton skeleton, Hand handedness)
         {      
             RhinoxGesture currentGesture = new RhinoxGesture();
@@ -101,6 +116,11 @@ namespace Rhinox.Grappler.Recognition
             return base.IsInitialised;
         }
 
+
+        /// <summary>
+        ///  initialises the recognition service whilst checking if the correct bone service is in place to facilitate the services funcrtionality
+        /// </summary>
+        /// <param name="boneManager"></param>
         public override void Initialise(BoneManager boneManager)
         {
 
