@@ -47,7 +47,7 @@ namespace Rhinox.Grappler
 
         private void SetupRecognitionService()
         {
-            _recognitionService = new Recognition.OculusRecognitionService();
+            _recognitionService = this.gameObject.GetComponent<Recognition.BaseRecognitionService>();
             _recognitionService.Initialise(_boneManager);
             _recognitionService.SetEnabled(true);
         }

@@ -1458,6 +1458,7 @@ MonoBehaviour:
   IsEnabled: 0
   _saveLeftPose: 0
   _saveRightPose: 0
+  _detectionTreshHold: 0.1
 --- !u!1 &1275544100
 GameObject:
   m_ObjectHideFlags: 0

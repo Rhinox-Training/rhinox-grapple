@@ -8,33 +8,32 @@ namespace Rhinox.Grappler.Recognition
 {
     public class OculusRecognitionService : BaseRecognitionService
     {
-        [HideInInspector]
-        private List<OVRBone> _leftHandSkeleton;
-
-        [HideInInspector]
-        private List<OVRBone> _rightHandSkeleton;
-
         [SerializeField] private bool _saveLeftPose = false;
         [SerializeField] private bool _saveRightPose = false;
-
+        [SerializeField] private float _detectionTreshHold = 0.1f;
+        
+        private UnityXRBoneService _unityBoneService;
 
         private void Update()
         {
             HandleSaving();
-            if(IsInitialised && IsEnabled)
-                HandleRecognition();
+            if (IsInitialised && IsEnabled)
+            {
+                HandleRecognition(ref LeftHandGestures, _unityBoneService.GetOculusSkeleton(Hand.Left),Hand.Left);
+                HandleRecognition(ref RightHandGestures, _unityBoneService.GetOculusSkeleton(Hand.Right), Hand.Right);
+
+            }
         }
         private void HandleSaving()
         {
             if (_saveLeftPose)
             {
-                BoneManagement.UnityXRBoneService unityBoneService = this.gameObject.GetComponent<BoneManagement.BoneManager>().GetBoneConvertorService() as BoneManagement.UnityXRBoneService;
                 var lhgesture = new RhinoxGesture();
                 lhgesture.name = "NEWPOSE";
                 List<Vector3> data = new List<Vector3>();
-                foreach (var bone in unityBoneService.GetOculusBones(BoneManagement.Hand.Left))
+                foreach (var bone in _unityBoneService.GetOculusBones(BoneManagement.Hand.Left))
                 {
-                    data.Add(unityBoneService.GetOculusSkeleton(BoneManagement.Hand.Left).transform.InverseTransformPoint(bone.Transform.position));
+                    data.Add(_unityBoneService.GetOculusSkeleton(BoneManagement.Hand.Left).transform.InverseTransformPoint(bone.Transform.position));
                 }
                 lhgesture.fingerPositions = data;
 
@@ -45,13 +44,12 @@ namespace Rhinox.Grappler.Recognition
 
             if (_saveRightPose)
             {
-                BoneManagement.UnityXRBoneService unityBoneService = this.gameObject.GetComponent<BoneManagement.BoneManager>().GetBoneConvertorService() as BoneManagement.UnityXRBoneService;
                 var rhgesture = new RhinoxGesture();
                 rhgesture.name = "NEWPOSE";
                 List<Vector3> data = new List<Vector3>();
-                foreach (var bone in unityBoneService.GetOculusBones(BoneManagement.Hand.Right))
+                foreach (var bone in _unityBoneService.GetOculusBones(BoneManagement.Hand.Right))
                 {
-                    data.Add(unityBoneService.GetOculusSkeleton(BoneManagement.Hand.Right).transform.InverseTransformPoint(bone.Transform.position));
+                    data.Add(_unityBoneService.GetOculusSkeleton(BoneManagement.Hand.Right).transform.InverseTransformPoint(bone.Transform.position));
                 }
                 rhgesture.fingerPositions = data;
 
@@ -61,9 +59,36 @@ namespace Rhinox.Grappler.Recognition
             }
         }
 
-        private void HandleRecognition()
-        {
+        private void HandleRecognition(ref List<RhinoxGesture> gestures, OVRSkeleton skeleton, Hand handedness)
+        {      
+            RhinoxGesture currentGesture = new RhinoxGesture();
+            float currentMin = Mathf.Infinity;
 
+            foreach (var gesture in gestures)
+            {
+                float sumDist = 0;
+                bool isDiscarded = false;
+                for (int i = 0; i < _unityBoneService.GetOculusBones(handedness).Count; i++)
+                {
+                    Vector3 currdata = skeleton.transform.InverseTransformPoint(_unityBoneService.GetOculusBones(handedness)[i].Transform.position);
+                    float dist = Vector3.Distance(currdata, gesture.fingerPositions[i]);
+                    if (dist > _detectionTreshHold)
+                    {
+                        isDiscarded = true;
+                        break;
+                    }
+
+                    sumDist += dist;
+                }
+
+                if (!isDiscarded && sumDist < currentMin)
+                {
+                    currentMin = sumDist;
+                    currentGesture = gesture;
+                }
+
+            }
+            currentGesture.onRecognised?.Invoke();
         }
 
         public override bool GetIsEnabled()
@@ -81,16 +106,12 @@ namespace Rhinox.Grappler.Recognition
 
             base.IsEnabled = true;
             base.IsInitialised = false;
-
-            BoneManagement.UnityXRBoneService unityBoneService = (UnityXRBoneService)boneManager.GetBoneConvertorService();
-            if (unityBoneService == null)
+            _unityBoneService = boneManager.GetBoneConvertorService() as UnityXRBoneService;
+            if (_unityBoneService == null)
             {
                 Debug.LogError("Rhinox.Grappler.Recognition.OculusRecognitionService.Initialise() : Cannot initialise OculusRecognitionService, not using an oculus compatible BoneConvertorService");
                 return;
             }
-
-            _leftHandSkeleton = unityBoneService.GetOculusBones(Hand.Left);
-            _rightHandSkeleton = unityBoneService.GetOculusBones(Hand.Right);
             base.IsInitialised = true;
         }
 
