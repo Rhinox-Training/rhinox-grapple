@@ -24,6 +24,9 @@ namespace Rhinox.Grappler.HandPhysics
             private float _forceMultiplier = 300.0f;
 
             public bool IsInitialised { get; private set; } = false;
+            public bool IsEnabled { get; set; } = false;
+
+
             private RhinoxBone _rhinoxBone = null;
             private LayerMask _collisionLayer = 0;
             private ContactPoint _contactPoint = null;
@@ -52,6 +55,14 @@ namespace Rhinox.Grappler.HandPhysics
 
             public void Update()
             {
+                if (!IsEnabled && _contactPoint != null)
+                {
+                    _contactPoint.Break();
+                }
+                else if (!IsEnabled)
+                    return;
+                    
+
                 if (_rhinoxBone.BoneCollisionCapsules.Count <= 0)
                     return;
 
@@ -189,8 +200,11 @@ namespace Rhinox.Grappler.HandPhysics
 
                 if (_handedness == Hand.Left)
                 {
+                    if (LeftHandConnectedObject == null)
+                        return;
+
                     LeftHandConnections--;
-                    if (LeftHandConnections == 0)
+                    if (LeftHandConnections <= 0)
                     {
                         LeftHandConnectedObject.GetComponent<Rigidbody>().useGravity = true;
                         LeftHandConnectedObject = null;
@@ -198,11 +212,14 @@ namespace Rhinox.Grappler.HandPhysics
                 }
                 else
                 {
+                    if (rightHandConnectedObject == null)
+                        return;
+
                     RightHandConnections--;
-                    if (RightHandConnections == 0)
+                    if (RightHandConnections <= 0)
                     {
-                        rightHandConnectedObject = null;
                         rightHandConnectedObject.GetComponent<Rigidbody>().useGravity = true;
+                        rightHandConnectedObject = null;
                     }
                 }              
             }
@@ -253,10 +270,14 @@ namespace Rhinox.Grappler.HandPhysics
 
 
         private bool _isInitialised = false;
-        private bool _isEnabled = false;
         private LayerMask _handLayer = -1;
+
         List<ContactSensor> _leftHandedSensorObjects = new List<ContactSensor>();
+        private bool _isLeftHandEnabled = false;
+
         List<ContactSensor> _rightHandedSensorObjects = new List<ContactSensor>();
+        private bool _isRightHandEnabled = false;
+
         private RhinoxBone _leftHandRoot = null;
         private RhinoxBone _rightHandRoot = null;
 
@@ -266,9 +287,17 @@ namespace Rhinox.Grappler.HandPhysics
         private ConfigurableJoint _leftHandRotationalJoint = null;
         private ConfigurableJoint _rightHandRotationalJoint = null;
 
-        public bool GetIsEnabled()
+        public bool GetIsEnabled(Hand handedness)
         {
-            return _isEnabled;
+            switch (handedness)
+            {
+                case Hand.Left:
+                    return _isLeftHandEnabled;
+                case Hand.Right:
+                    return _isRightHandEnabled;
+            }
+            return false;
+
         }
 
         public bool GetIsInitialised()
@@ -353,9 +382,39 @@ namespace Rhinox.Grappler.HandPhysics
             }
         }
 
-        public void SetEnabled(bool newState)
+        public void SetEnabled(bool newState, Hand handedness)
         {
-            _isEnabled = newState;
+            switch (handedness)
+            {
+                case Hand.Left:
+                    _isLeftHandEnabled = newState;
+                    foreach (var contactSensor in _leftHandedSensorObjects)
+                    {
+                        contactSensor.IsEnabled = newState;
+                    }
+                    break;
+                case Hand.Right:
+                    _isRightHandEnabled = newState;
+                    foreach (var contactSensor in _rightHandedSensorObjects)
+                    {
+                        contactSensor.IsEnabled = newState;
+                    }
+                    break;
+                case Hand.Both:
+                    _isLeftHandEnabled = newState;
+                    foreach (var contactSensor in _leftHandedSensorObjects)
+                    {
+                        contactSensor.IsEnabled = newState;
+                    }
+
+                    _isRightHandEnabled = newState;
+                    foreach (var contactSensor in _rightHandedSensorObjects)
+                    {
+                        contactSensor.IsEnabled = newState;
+                    }
+                    break;
+            }
+
         }
 
         public void SetHandLayer(LayerMask layer)

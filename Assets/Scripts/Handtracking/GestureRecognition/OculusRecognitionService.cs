@@ -10,9 +10,10 @@ namespace Rhinox.Grappler.Recognition
     {
         [SerializeField] private bool _saveLeftPose = false;
         [SerializeField] private bool _saveRightPose = false;
-        [SerializeField] private float _detectionTreshHold = 0.1f;
+        [SerializeField] private float _detectionTreshHold = 0.01f;
         
         private UnityXRBoneService _unityBoneService;
+
 
         private void Update()
         {
@@ -70,6 +71,7 @@ namespace Rhinox.Grappler.Recognition
 
         /// <summary>
         /// Goes over all currently known gestures in the system and finds the one that matches the best whilst keeping a detection treshholdin mind
+        /// Also handles the unrecognising of previously recognised hand gestured 
         /// </summary>
         /// <param name="gestures">Possible gestures that cna be detected</param>
         /// <param name="skeleton">Skeleton parent of the bones</param>
@@ -104,6 +106,12 @@ namespace Rhinox.Grappler.Recognition
 
             }
             currentGesture.onRecognised?.Invoke();
+
+            if (currentGesture != base._previousGesture)
+            {
+                base._previousGesture.onUnRecognised?.Invoke();
+            }
+            base._previousGesture = currentGesture;
         }
 
         public override bool GetIsEnabled()

@@ -11,6 +11,8 @@ namespace Rhinox.Grappler
         [SerializeField] private Recognition.BaseRecognitionService _recognitionService = null;
         private BoneManagement.BoneManager _boneManager = null;
 
+
+
         [SerializeField] private LayerMask _handLayer = 0;
 
         public bool IsInitialised { get; private set; } = false;        
@@ -32,16 +34,17 @@ namespace Rhinox.Grappler
 
         private void SetupPhysicServices()
         {
+            _physicsServices.Add(new HandPhysics.ProxyPhysics());
             _physicsServices.Add(new HandPhysics.ContactPointBasedPhysics());
 
             foreach (var physicsService in _physicsServices)
             {
                 physicsService.SetHandLayer(_handLayer);
                 physicsService.Initialise(_boneManager);
+                physicsService.SetEnabled(false, BoneManagement.Hand.Both);
+
             }
-
-            _physicsServices[0].SetEnabled(true);
-
+            _physicsServices[1].SetEnabled(true, BoneManagement.Hand.Both);
             IsInitialised = true;
         }
 
@@ -94,6 +97,41 @@ namespace Rhinox.Grappler
             }
         }
 
-    }
+        public void EnableLeftHandService(int serviceIdx)
+        {
+            if (serviceIdx + 1 > _physicsServices.Count)
+            {
+                Debug.LogError("Rhinox.Grappler.HandPhysicsController.EnableService() : Given service index does not exist");
+                return;
+            }
 
+            Debug.Log("Rhinox.Grappler.HandPhysicsController.EnableService() : Enabling physics service: " + serviceIdx);
+
+            foreach (var physicsService in _physicsServices)
+            {
+                physicsService.SetEnabled(false, BoneManagement.Hand.Left);
+            }
+            _physicsServices[serviceIdx].SetEnabled(true, BoneManagement.Hand.Left);
+
+        }
+
+        public void EnableRightHandService(int serviceIdx)
+        {
+            if (serviceIdx + 1 > _physicsServices.Count)
+            {
+                Debug.LogError("Rhinox.Grappler.HandPhysicsController.EnableService() : Given service index does not exist");
+                return;
+            }
+
+            Debug.Log("Rhinox.Grappler.HandPhysicsController.EnableService() : Enabling physics service: " + serviceIdx);
+
+            foreach (var physicsService in _physicsServices)
+            {
+                physicsService.SetEnabled(false, BoneManagement.Hand.Right);
+            }
+            _physicsServices[serviceIdx].SetEnabled(true, BoneManagement.Hand.Right);
+
+        }
+
+    }
 }

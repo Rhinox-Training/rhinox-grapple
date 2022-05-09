@@ -1,10 +1,12 @@
-﻿namespace Rhinox.Grappler.HandPhysics
+﻿using Rhinox.Grappler.BoneManagement;
+
+namespace Rhinox.Grappler.HandPhysics
 {    public interface IPhysicsService
     {
         void Initialise(BoneManagement.BoneManager boneManager);
         bool GetIsInitialised();
-        void SetEnabled(bool newState);
-        bool GetIsEnabled();
+        void SetEnabled(bool newState, Hand handedness);
+        bool GetIsEnabled(Hand handedness);
         void Update();
         void SetHandLayer(UnityEngine.LayerMask layer);
 

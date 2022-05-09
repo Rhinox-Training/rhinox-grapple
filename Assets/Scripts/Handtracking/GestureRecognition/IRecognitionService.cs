@@ -12,6 +12,43 @@ namespace Rhinox.Grappler.Recognition
         public string name;
         public List<Vector3> fingerPositions;
         public UnityEvent onRecognised;
+        public UnityEvent onUnRecognised;
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            if (fingerPositions == null)
+                return false;
+
+            var objectToCompareWith = (RhinoxGesture)obj;
+
+            if (objectToCompareWith.name == null)
+                return false;
+
+            if (fingerPositions.Count != objectToCompareWith.fingerPositions.Count)
+                return false;
+
+            for (int i = 0; i < fingerPositions.Count; i++)
+                if (fingerPositions[i] != objectToCompareWith.fingerPositions[i])
+                    return false;
+           
+            return true;
+        }
+
+        public static bool operator ==(RhinoxGesture gesture_one, RhinoxGesture gesture_two)
+        {
+            return gesture_one.Equals(gesture_two);
+        }
+
+        public static bool operator !=(RhinoxGesture gesture_one, RhinoxGesture gesture_two)
+        {
+            return !gesture_one.Equals(gesture_two);
+        }
+
     }
     public interface IRecognitionService
     {
@@ -25,6 +62,9 @@ namespace Rhinox.Grappler.Recognition
     {
         public List<RhinoxGesture> LeftHandGestures;
         public List<RhinoxGesture> RightHandGestures;
+
+        protected RhinoxGesture _previousGesture = new RhinoxGesture();
+
         
         [HideInInspector]
         public bool IsInitialised;

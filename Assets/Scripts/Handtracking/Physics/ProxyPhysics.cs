@@ -74,6 +74,11 @@ namespace Rhinox.Grappler.HandPhysics
                 SetCollisionLayer();
             }
 
+            private void Destroy()
+            {
+                GameObject.Destroy(_proxyObject);
+            }
+
             /// <summary>
             /// creates and assigns a dummy object with the correct settings
             /// </summary>
@@ -166,7 +171,11 @@ namespace Rhinox.Grappler.HandPhysics
 
             public void SetEnabled(bool newState)
             {
-                _proxyObject.SetActive(newState);
+                if (!newState)
+                    Destroy();
+                else
+                    Rebuild();
+
             }
 
             private void SetCollisionLayer()
@@ -183,16 +192,28 @@ namespace Rhinox.Grappler.HandPhysics
         }
 
         private bool _isInitialised = false;
-        private bool _isEnabled = false;
-        private List<ProxyObject> _proxyObjects = new List<ProxyObject>();
+
+        private List<ProxyObject> _leftHandProxyObjects = new List<ProxyObject>();
+        private bool _isLeftHandEnabled = false;
+
+        private List<ProxyObject> _rightHandProxyObjects = new List<ProxyObject>();
+        private bool _isRightHandEnabled = false;
+
+
         private LayerMask _handLayer = -1;
 
         void IPhysicsService.Initialise(BoneManager boneManager)
         {
-            List<RhinoxBone> handBones = boneManager.GetRhinoxBones(Hand.Both);
-            foreach (var Bone in handBones)
+            List<RhinoxBone> leftHandBones = boneManager.GetRhinoxBones(Hand.Left);
+            foreach (var Bone in leftHandBones)
             {
-                _proxyObjects.Add(new ProxyObject(Bone,_handLayer));
+                _leftHandProxyObjects.Add(new ProxyObject(Bone,_handLayer));
+            }
+
+            List<RhinoxBone> rightHandBones = boneManager.GetRhinoxBones(Hand.Right);
+            foreach (var Bone in rightHandBones)
+            {
+                _rightHandProxyObjects.Add(new ProxyObject(Bone, _handLayer));
             }
             _isInitialised = true;
         }
@@ -202,18 +223,49 @@ namespace Rhinox.Grappler.HandPhysics
             return _isInitialised;
         }
 
-        void IPhysicsService.SetEnabled(bool newState)
+        void IPhysicsService.SetEnabled(bool newState, Hand handedness)
         {
-            foreach (var proxyObject in _proxyObjects)
+            switch (handedness)
             {
-                proxyObject.SetEnabled(newState);
-            }
-            _isEnabled = newState;
-        }
+                case Hand.Left:
+                    _isLeftHandEnabled = newState;
+                    foreach (var proxyObject in _leftHandProxyObjects)
+                    {
+                        proxyObject.SetEnabled(newState);
+                    }
+                    break;
+                case Hand.Right:
+                    _isRightHandEnabled = newState;
+                    foreach (var proxyObject in _rightHandProxyObjects)
+                    {
+                        proxyObject.SetEnabled(newState);
+                    }
+                    break;
+                case Hand.Both:
+                    _isLeftHandEnabled = newState;
+                    foreach (var proxyObject in _leftHandProxyObjects)
+                    {
+                        proxyObject.SetEnabled(newState);
+                    }
 
-        bool IPhysicsService.GetIsEnabled()
+                    _isRightHandEnabled = newState;
+                    foreach (var proxyObject in _rightHandProxyObjects)
+                    {
+                        proxyObject.SetEnabled(newState);
+                    }
+                    break;
+            }
+        }
+        bool IPhysicsService.GetIsEnabled(Hand handedness)
         {
-            return _isEnabled;
+            switch (handedness)
+            {
+                case Hand.Left:
+                    return _isLeftHandEnabled;
+                case Hand.Right:
+                    return _isRightHandEnabled;
+            }
+            return false;
         }
 
         void IPhysicsService.SetHandLayer(LayerMask layer) 
@@ -223,12 +275,19 @@ namespace Rhinox.Grappler.HandPhysics
 
         void IPhysicsService.Update()
         {
-            if (!_isEnabled)
-                return;
-
-            foreach (var proxyObject in _proxyObjects)
+            if (_isLeftHandEnabled)
             {
-                proxyObject.Update();
+                foreach (var proxyObject in _leftHandProxyObjects)
+                {
+                    proxyObject.Update();
+                }
+            }
+            if (_isRightHandEnabled)
+            {
+                foreach (var proxyObject in _rightHandProxyObjects)
+                {
+                    proxyObject.Update();
+                }
             }
         }
     }

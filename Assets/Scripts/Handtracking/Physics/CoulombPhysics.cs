@@ -168,6 +168,16 @@ namespace Rhinox.Grappler.HandPhysics
                 CoulombObject.Update();
             }
         }
+
+        public void SetEnabled(bool newState, Hand handedness)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetIsEnabled(Hand handedness)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 
