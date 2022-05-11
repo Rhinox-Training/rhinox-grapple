@@ -202,7 +202,7 @@ namespace Rhinox.Grappler.HandPhysics
 
         private LayerMask _handLayer = -1;
 
-        void IPhysicsService.Initialise(BoneManager boneManager)
+        void IPhysicsService.Initialise(BoneManager boneManager, HandPhysicsController controller)
         {
             List<RhinoxBone> leftHandBones = boneManager.GetRhinoxBones(Hand.Left);
             foreach (var Bone in leftHandBones)

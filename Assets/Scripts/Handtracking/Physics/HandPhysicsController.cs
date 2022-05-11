@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Rhinox.Grappler.BoneManagement;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,13 +8,24 @@ namespace Rhinox.Grappler
 {
     public class HandPhysicsController : MonoBehaviour
     {
-        private List<HandPhysics.IPhysicsService> _physicsServices = new List<HandPhysics.IPhysicsService>();
-        [SerializeField] private Recognition.BaseRecognitionService _recognitionService = null;
+       [HideInInspector]
+        public List<HandPhysics.IPhysicsService> PhysicsServices { private set; get; } = null;
+
+        [HideInInspector]
+        public MeshBaking.IMeshBakingService MeshBakingService { private set; get; } = null;
+
+        [HideInInspector]
+        public MaterialManagement.IMaterialService MaterialService { private set; get; } = null;
+
+        [HideInInspector]
+        public Recognition.BaseRecognitionService RecognitionService { private set; get; } = null;
+
+
         private BoneManagement.BoneManager _boneManager = null;
-
-
-
         [SerializeField] private LayerMask _handLayer = 0;
+        [SerializeField] public Material OpaqueHandMaterial = null;
+        [SerializeField] public Material SeethroughHandMaterial = null;
+        [SerializeField] public Material BakedHandMaterial = null;
 
         public bool IsInitialised { get; private set; } = false;        
         private void Awake()
@@ -28,33 +40,48 @@ namespace Rhinox.Grappler
            
             _boneManager.onIsInitialised.AddListener(SetupPhysicServices);
             _boneManager.onIsInitialised.AddListener(SetupRecognitionService);
+            _boneManager.onIsInitialised.AddListener(SetupMeshBaking);
+            _boneManager.onIsInitialised.AddListener(SetupMaterialManagement);
+
             _boneManager.SetBoneConvertorService(new BoneManagement.UnityXRBoneService());
 
         }
 
         private void SetupPhysicServices()
         {
-            _physicsServices.Add(new HandPhysics.ProxyPhysics());
-            _physicsServices.Add(new HandPhysics.ContactPointBasedPhysics());
+            PhysicsServices = new List<HandPhysics.IPhysicsService>();
+            PhysicsServices.Add(new HandPhysics.ProxyPhysics());
+            PhysicsServices.Add(new HandPhysics.ContactPointBasedPhysics());
 
-            foreach (var physicsService in _physicsServices)
+            foreach (var physicsService in PhysicsServices)
             {
                 physicsService.SetHandLayer(_handLayer);
-                physicsService.Initialise(_boneManager);
+                physicsService.Initialise(_boneManager, this);
                 physicsService.SetEnabled(false, BoneManagement.Hand.Both);
 
             }
-            _physicsServices[1].SetEnabled(true, BoneManagement.Hand.Both);
+            PhysicsServices[1].SetEnabled(true, BoneManagement.Hand.Both);
             IsInitialised = true;
         }
 
         private void SetupRecognitionService()
         {
-            _recognitionService = this.gameObject.GetComponent<Recognition.BaseRecognitionService>();
-            _recognitionService.Initialise(_boneManager);
-            _recognitionService.SetEnabled(true);
+            RecognitionService = this.gameObject.GetComponent<Recognition.BaseRecognitionService>();
+            RecognitionService.Initialise(_boneManager);
+            RecognitionService.SetEnabled(true);
         }
 
+        private void SetupMeshBaking()
+        {
+            MeshBakingService = new MeshBaking.OculusMeshBakingService();
+            MeshBakingService.Initialise(_boneManager,this);
+        }
+
+        private void SetupMaterialManagement()
+        {
+            MaterialService = new MaterialManagement.OculusMaterialService();
+            MaterialService.Initialise(_boneManager,this);
+        }
 
         private void SetupLayerCollisions()
         {
@@ -90,7 +117,7 @@ namespace Rhinox.Grappler
             if (!IsInitialised)
                 return;
 
-            foreach (var physicsService in _physicsServices)
+            foreach (var physicsService in PhysicsServices)
             {
                 if(physicsService.GetIsInitialised())
                     physicsService.Update();
@@ -99,7 +126,7 @@ namespace Rhinox.Grappler
 
         public void EnableLeftHandService(int serviceIdx)
         {
-            if (serviceIdx + 1 > _physicsServices.Count)
+            if (serviceIdx + 1 > PhysicsServices.Count)
             {
                 Debug.LogError("Rhinox.Grappler.HandPhysicsController.EnableService() : Given service index does not exist");
                 return;
@@ -107,17 +134,17 @@ namespace Rhinox.Grappler
 
             Debug.Log("Rhinox.Grappler.HandPhysicsController.EnableService() : Enabling physics service: " + serviceIdx);
 
-            foreach (var physicsService in _physicsServices)
+            foreach (var physicsService in PhysicsServices)
             {
                 physicsService.SetEnabled(false, BoneManagement.Hand.Left);
             }
-            _physicsServices[serviceIdx].SetEnabled(true, BoneManagement.Hand.Left);
+            PhysicsServices[serviceIdx].SetEnabled(true, BoneManagement.Hand.Left);
 
         }
 
         public void EnableRightHandService(int serviceIdx)
         {
-            if (serviceIdx + 1 > _physicsServices.Count)
+            if (serviceIdx + 1 > PhysicsServices.Count)
             {
                 Debug.LogError("Rhinox.Grappler.HandPhysicsController.EnableService() : Given service index does not exist");
                 return;
@@ -125,12 +152,50 @@ namespace Rhinox.Grappler
 
             Debug.Log("Rhinox.Grappler.HandPhysicsController.EnableService() : Enabling physics service: " + serviceIdx);
 
-            foreach (var physicsService in _physicsServices)
+            foreach (var physicsService in PhysicsServices)
             {
                 physicsService.SetEnabled(false, BoneManagement.Hand.Right);
             }
-            _physicsServices[serviceIdx].SetEnabled(true, BoneManagement.Hand.Right);
+            PhysicsServices[serviceIdx].SetEnabled(true, BoneManagement.Hand.Right);
 
+        }
+    
+        public void SetLeftHandMaterial(int materialIdx)
+        {
+            switch (materialIdx)
+            {
+                case 0:
+                    MaterialService.SetHandMaterial(Hand.Left, OpaqueHandMaterial);
+                    break;
+                case 1:
+                    MaterialService.SetHandMaterial(Hand.Left, SeethroughHandMaterial);
+                    break;
+                case 2:
+                    MaterialService.SetHandMaterial(Hand.Left, BakedHandMaterial);
+                    break;
+                default:
+                    MaterialService.SetHandMaterial(Hand.Left, OpaqueHandMaterial);
+                    break;
+            }
+        }
+
+        public void SetRightHandMaterial(int materialIdx)
+        {
+            switch (materialIdx)
+            {
+                case 0:
+                    MaterialService.SetHandMaterial(Hand.Right, OpaqueHandMaterial);
+                    break;
+                case 1:
+                    MaterialService.SetHandMaterial(Hand.Right, SeethroughHandMaterial);
+                    break;
+                case 2:
+                    MaterialService.SetHandMaterial(Hand.Right, BakedHandMaterial);
+                    break;
+                default:
+                    MaterialService.SetHandMaterial(Hand.Right, OpaqueHandMaterial);
+                    break;
+            }
         }
 
     }

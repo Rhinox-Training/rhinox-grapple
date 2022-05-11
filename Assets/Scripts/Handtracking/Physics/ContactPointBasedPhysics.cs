@@ -14,11 +14,12 @@ namespace Rhinox.Grappler.HandPhysics
         protected static int LeftHandConnections = 0;
         protected static GameObject rightHandConnectedObject = null;
         protected static int RightHandConnections = 0;
-        
+        protected static HandPhysicsController _controller;
+
         public class ContactSensor
         {
             /// SETTINGS ///
-            private float _detectDistance = 0.05f;
+            private float _detectDistance = 0.010f;
             private float _deadzone = 0.02f;
             private float _breakDistance = 0.15f;
             private float _forceMultiplier = 300.0f;
@@ -162,6 +163,7 @@ namespace Rhinox.Grappler.HandPhysics
                     LeftHandConnections++;
                     if (LeftHandConnections == 1)
                     {
+                        _controller.MeshBakingService.BakeMesh(Hand.Left, contactObject);
                         LeftHandConnectedObject = contactObject;
                         LeftHandConnectedObject.GetComponent<Rigidbody>().useGravity = false;
                     }
@@ -175,6 +177,7 @@ namespace Rhinox.Grappler.HandPhysics
                     RightHandConnections++;
                     if (RightHandConnections == 1)
                     {
+                        _controller.MeshBakingService.BakeMesh(Hand.Right, contactObject);
                         rightHandConnectedObject = contactObject;
                         rightHandConnectedObject.GetComponent<Rigidbody>().useGravity = false;
                     }
@@ -206,6 +209,7 @@ namespace Rhinox.Grappler.HandPhysics
                     LeftHandConnections--;
                     if (LeftHandConnections <= 0)
                     {
+                        _controller.MeshBakingService.RemoveMesh(Hand.Left);
                         LeftHandConnectedObject.GetComponent<Rigidbody>().useGravity = true;
                         LeftHandConnectedObject = null;
                     }
@@ -218,6 +222,7 @@ namespace Rhinox.Grappler.HandPhysics
                     RightHandConnections--;
                     if (RightHandConnections <= 0)
                     {
+                        _controller.MeshBakingService.RemoveMesh(Hand.Right);
                         rightHandConnectedObject.GetComponent<Rigidbody>().useGravity = true;
                         rightHandConnectedObject = null;
                     }
@@ -286,7 +291,6 @@ namespace Rhinox.Grappler.HandPhysics
 
         private ConfigurableJoint _leftHandRotationalJoint = null;
         private ConfigurableJoint _rightHandRotationalJoint = null;
-
         public bool GetIsEnabled(Hand handedness)
         {
             switch (handedness)
@@ -305,8 +309,10 @@ namespace Rhinox.Grappler.HandPhysics
             return _isInitialised;
         }
 
-        public void Initialise(BoneManager boneManager)
+        public void Initialise(BoneManager boneManager, HandPhysicsController controller)
         {
+            _controller = controller;
+
             List<RhinoxBone> leftHandBones = boneManager.GetRhinoxBones(Hand.Left);
             List<RhinoxBone> rightHandBones = boneManager.GetRhinoxBones(Hand.Right);
 
@@ -421,7 +427,6 @@ namespace Rhinox.Grappler.HandPhysics
         {
             _handLayer = layer;
         }
-
 
     }
 

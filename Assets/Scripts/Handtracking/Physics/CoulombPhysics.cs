@@ -135,7 +135,7 @@ namespace Rhinox.Grappler.HandPhysics
             return _isInitialised;
         }
 
-        public void Initialise(BoneManager boneManager)
+        public void Initialise(BoneManager boneManager, HandPhysicsController controller)
         {
             List<RhinoxBone> leftHandBones = boneManager.GetRhinoxBones(Hand.Left);
             List<RhinoxBone> rightHandBones = boneManager.GetRhinoxBones(Hand.Right);

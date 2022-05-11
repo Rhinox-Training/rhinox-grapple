@@ -3,7 +3,7 @@
 namespace Rhinox.Grappler.HandPhysics
 {    public interface IPhysicsService
     {
-        void Initialise(BoneManagement.BoneManager boneManager);
+        void Initialise(BoneManagement.BoneManager boneManager, HandPhysicsController controller);
         bool GetIsInitialised();
         void SetEnabled(bool newState, Hand handedness);
         bool GetIsEnabled(Hand handedness);
