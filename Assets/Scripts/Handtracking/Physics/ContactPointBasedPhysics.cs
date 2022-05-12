@@ -152,12 +152,14 @@ namespace Rhinox.Grappler.HandPhysics
 
             public ContactPoint(GameObject contactObject, Hand handedness, Vector3 contactPosition)
             {
-
-
                 if (handedness == Hand.Left)
                 {
                     // prevents mutliple object grabbing
                     if (LeftHandConnectedObject != null && LeftHandConnectedObject != contactObject)
+                        return;
+
+                    // prevents grabbing an object already grabbed
+                    if (contactObject == rightHandConnectedObject)
                         return;
 
                     LeftHandConnections++;
@@ -174,6 +176,10 @@ namespace Rhinox.Grappler.HandPhysics
                     if (rightHandConnectedObject != null && rightHandConnectedObject != contactObject)
                         return;
 
+                    // prevents grabbing an object already grabbed
+                    if (contactObject == LeftHandConnectedObject)
+                        return;
+
                     RightHandConnections++;
                     if (RightHandConnections == 1)
                     {
@@ -187,7 +193,6 @@ namespace Rhinox.Grappler.HandPhysics
                 _contactPoint = new GameObject("ContactPoint_" + contactObject.name);
                 _contactPoint.transform.position = contactPosition;
                 _contactPoint.transform.parent = contactObject.transform;
-
             }
 
             /// <summary>
@@ -381,7 +386,7 @@ namespace Rhinox.Grappler.HandPhysics
                     // if there is one connected, connect it to that one
                     _rightHandRotationalJoint.connectedBody = rightHandConnectedObject.GetComponent<Rigidbody>();
                 }
-                else if (LeftHandConnectedObject == null)
+                else if (rightHandConnectedObject == null)
                 {
                     _rightHandRotationalJoint.connectedBody = null;
                 }
