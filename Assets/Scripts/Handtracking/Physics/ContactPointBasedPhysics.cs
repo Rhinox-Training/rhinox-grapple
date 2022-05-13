@@ -21,7 +21,7 @@ namespace Rhinox.Grappler.HandPhysics
             /// SETTINGS ///
             private float _detectDistance = 0.010f;
             private float _deadzone = 0.02f;
-            private float _breakDistance = 0.15f;
+            private float _breakDistance = 0.40f;
             private float _forceMultiplier = 300.0f;
 
             public bool IsInitialised { get; private set; } = false;
@@ -154,6 +154,9 @@ namespace Rhinox.Grappler.HandPhysics
             {
                 if (handedness == Hand.Left)
                 {
+                    if (contactObject.GetComponent<NotGrabbable>())
+                        return;
+
                     // prevents mutliple object grabbing
                     if (LeftHandConnectedObject != null && LeftHandConnectedObject != contactObject)
                         return;
@@ -172,6 +175,9 @@ namespace Rhinox.Grappler.HandPhysics
                 }
                 else
                 {
+                    if (contactObject.GetComponent<NotGrabbable>())
+                        return;
+
                     // prevents mutliple object grabbing
                     if (rightHandConnectedObject != null && rightHandConnectedObject != contactObject)
                         return;
