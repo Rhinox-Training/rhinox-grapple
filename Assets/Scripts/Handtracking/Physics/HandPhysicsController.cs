@@ -99,6 +99,11 @@ namespace Rhinox.Grappler
 
         }
 
+        /// <summary>
+        /// Sets the layer of the gameobject and all its children to the layer number given
+        /// </summary>
+        /// <param name="gameObject"></param>
+        /// <param name="layer"></param>
         private void SetLayerRecursive(GameObject gameObject, int layer)
         {
             gameObject.layer = layer;

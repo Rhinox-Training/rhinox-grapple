@@ -324,6 +324,14 @@ namespace Rhinox.Grappler.HandPhysics
             return _isInitialised;
         }
 
+
+        /// <summary>
+        /// Gets the list of bones for both hands and finds the first bone for each(which is hopefully the root)
+        /// After that it sets up de dummy object used for rotation calculations with the joint
+        /// Then it sets up all the contact sensors for each bone
+        /// </summary>
+        /// <param name="boneManager"></param>
+        /// <param name="controller"></param>
         public void Initialise(BoneManager boneManager, HandPhysicsController controller)
         {
             _controller = controller;
@@ -349,7 +357,7 @@ namespace Rhinox.Grappler.HandPhysics
         }
 
         /// <summary>
-        /// creates a dummy object with and setups the join to be used 
+        /// creates a dummy object with a joint and does the setup for it 
         /// </summary>
         /// <param name="dummy"></param>
         /// <param name="root"></param>
