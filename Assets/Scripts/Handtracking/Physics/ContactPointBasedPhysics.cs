@@ -171,6 +171,7 @@ namespace Rhinox.Grappler.HandPhysics
                         _controller.MeshBakingService.BakeMesh(Hand.Left, contactObject);
                         LeftHandConnectedObject = contactObject;
                         LeftHandConnectedObject.GetComponent<Rigidbody>().useGravity = false;
+                        LeftHandConnectedObject.GetComponent<Rigidbody>().drag = 10;
                     }
                 }
                 else
@@ -192,6 +193,7 @@ namespace Rhinox.Grappler.HandPhysics
                         _controller.MeshBakingService.BakeMesh(Hand.Right, contactObject);
                         rightHandConnectedObject = contactObject;
                         rightHandConnectedObject.GetComponent<Rigidbody>().useGravity = false;
+                        rightHandConnectedObject.GetComponent<Rigidbody>().drag = 10;
                     }
                 }
 
@@ -222,6 +224,7 @@ namespace Rhinox.Grappler.HandPhysics
                     {
                         _controller.MeshBakingService.RemoveMesh(Hand.Left);
                         LeftHandConnectedObject.GetComponent<Rigidbody>().useGravity = true;
+                        LeftHandConnectedObject.GetComponent<Rigidbody>().drag = 0;
                         LeftHandConnectedObject = null;
                     }
                 }
@@ -235,6 +238,7 @@ namespace Rhinox.Grappler.HandPhysics
                     {
                         _controller.MeshBakingService.RemoveMesh(Hand.Right);
                         rightHandConnectedObject.GetComponent<Rigidbody>().useGravity = true;
+                        rightHandConnectedObject.GetComponent<Rigidbody>().drag = 0;
                         rightHandConnectedObject = null;
                     }
                 }              
