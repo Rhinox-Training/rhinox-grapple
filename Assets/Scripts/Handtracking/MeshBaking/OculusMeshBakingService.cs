@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Rhinox.Grappler.MeshBaking
 {
-    public class OculusMeshBakingService : IMeshBakingService
+    public class OculusMeshBakingService : BaseMeshBakingService
     {
         private bool _isInitialised = false;
 
@@ -18,12 +18,12 @@ namespace Rhinox.Grappler.MeshBaking
         private UnityXRBoneService _unityBoneService = null;
         private HandPhysicsController _controller = null;
 
-        public bool GetIsInitialised()
+        public override bool GetIsInitialised()
         {
             return _isInitialised;
         }
 
-        public void Initialise(BoneManager boneManager, HandPhysicsController controller)
+        public override void Initialise(BoneManager boneManager, HandPhysicsController controller)
         {
             _controller = controller;
 
@@ -42,7 +42,7 @@ namespace Rhinox.Grappler.MeshBaking
         }
 
 
-        public void BakeMesh(Hand handedness, GameObject parentObj)
+        public override void BakeMesh(Hand handedness, GameObject parentObj)
         {
             MeshRenderer meshRenderer = null;
             MeshFilter meshFilter = null;
@@ -110,7 +110,7 @@ namespace Rhinox.Grappler.MeshBaking
             }
         }
 
-        public void RemoveMesh(Hand handedness)
+        public override void RemoveMesh(Hand handedness)
         {
             switch (handedness)
             {

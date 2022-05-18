@@ -161,7 +161,7 @@ namespace Rhinox.Grappler.HandPhysics
             _handLayer = layer;
         }
 
-        public void Update()
+        public void ManualUpdate()
         {
             foreach (var CoulombObject in _coulombObjects)
             {

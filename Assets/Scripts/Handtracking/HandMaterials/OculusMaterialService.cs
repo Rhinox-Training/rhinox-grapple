@@ -1,11 +1,13 @@
 ﻿using Rhinox.Grappler.BoneManagement;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Rhinox.Grappler.MaterialManagement
 {
-    public class OculusMaterialService : IMaterialService
+    [Serializable]
+    public class OculusMaterialService : BaseMaterialService
     {
         private bool _isInitialised = false;
         private UnityXRBoneService _unityBoneService = null;
@@ -13,7 +15,7 @@ namespace Rhinox.Grappler.MaterialManagement
         private SkinnedMeshRenderer _leftHandSkinnedMesh = null;
         private SkinnedMeshRenderer _rightHandSkinnedMesh = null;
 
-        public void Initialise(BoneManager boneManager, HandPhysicsController controller)
+        public override void Initialise(BoneManager boneManager, HandPhysicsController controller)
         {
             _unityBoneService = boneManager.GetBoneConvertorService() as UnityXRBoneService;
             if (_unityBoneService == null)
@@ -29,12 +31,12 @@ namespace Rhinox.Grappler.MaterialManagement
             _isInitialised = true;
         }
 
-        public bool GetIsInitialised()
+        public override bool GetIsInitialised()
         {
             return _isInitialised;
         }
 
-        public void SetHandMaterial(Hand handedness, Material newMat)
+        public override void SetHandMaterial(Hand handedness, Material newMat)
         {
             switch (handedness)
             {

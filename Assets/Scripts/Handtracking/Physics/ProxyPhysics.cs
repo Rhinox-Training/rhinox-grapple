@@ -7,10 +7,14 @@ using System;
 
 namespace Rhinox.Grappler.HandPhysics
 {
-    public class ProxyPhysics : IPhysicsService
+    public class ProxyPhysics : BasePhysicsService
     {
         private class ProxyObject
         {
+            // settings
+            private const float _gracePeriod = 0.5f;
+            private float _gracePeriodTimer = -1;
+
             public bool IsInitialised { get; private set; } = false;
             private bool _prevState = false;
             private RhinoxBone _rhinoxBone = null;
@@ -69,6 +73,9 @@ namespace Rhinox.Grappler.HandPhysics
 
                 GameObject.Destroy(_proxyObject);
                 _proxyObject = new GameObject("ProxyObject_" + _rhinoxBone.Name);
+                _proxyObject.SetActive(false);
+
+                _gracePeriodTimer = _gracePeriod;
 
                 BuildProxyObject();
                 SetCollisionLayer();
@@ -160,6 +167,13 @@ namespace Rhinox.Grappler.HandPhysics
                 if (!IsInitialised)
                     return;
 
+                if (_gracePeriodTimer > 0.0f)
+                {
+                    _proxyObject.SetActive(false);
+                    _gracePeriodTimer -= Time.deltaTime;
+                    return;
+                }
+
                 _proxyObject.SetActive(_dummyObject.activeInHierarchy);
                 
                 if (_dummyObject.activeInHierarchy == true && _prevState == false)
@@ -169,13 +183,20 @@ namespace Rhinox.Grappler.HandPhysics
                 _prevState = _dummyObject.activeInHierarchy;
             }
 
+
+            // TODO, check how prevstate changes in the code flow, it is being set multiple times
             public void SetEnabled(bool newState)
             {
+                if (newState == _prevState)
+                    return;
+
                 if (!newState)
                     Destroy();
                 else
+                {
                     Rebuild();
-
+                }
+                _prevState = newState;
             }
 
             private void SetCollisionLayer()
@@ -202,7 +223,7 @@ namespace Rhinox.Grappler.HandPhysics
 
         private LayerMask _handLayer = -1;
 
-        void IPhysicsService.Initialise(BoneManager boneManager, HandPhysicsController controller)
+        public override void Initialise(BoneManager boneManager, HandPhysicsController controller)
         {
             List<RhinoxBone> leftHandBones = boneManager.GetRhinoxBones(Hand.Left);
             foreach (var Bone in leftHandBones)
@@ -218,12 +239,12 @@ namespace Rhinox.Grappler.HandPhysics
             _isInitialised = true;
         }
 
-        bool IPhysicsService.GetIsInitialised()
+        public override bool GetIsInitialised()
         {
             return _isInitialised;
         }
 
-        void IPhysicsService.SetEnabled(bool newState, Hand handedness)
+        public override void SetEnabled(bool newState, Hand handedness)
         {
             switch (handedness)
             {
@@ -256,7 +277,7 @@ namespace Rhinox.Grappler.HandPhysics
                     break;
             }
         }
-        bool IPhysicsService.GetIsEnabled(Hand handedness)
+        public override bool GetIsEnabled(Hand handedness)
         {
             switch (handedness)
             {
@@ -268,12 +289,12 @@ namespace Rhinox.Grappler.HandPhysics
             return false;
         }
 
-        void IPhysicsService.SetHandLayer(LayerMask layer) 
+        public override void SetHandLayer(LayerMask layer) 
         {
             _handLayer = layer;
         }
 
-        void IPhysicsService.Update()
+        public override void ManualUpdate()
         {
             if (_isLeftHandEnabled)
             {

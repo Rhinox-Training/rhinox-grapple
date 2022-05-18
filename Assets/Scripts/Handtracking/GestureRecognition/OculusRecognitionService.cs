@@ -105,13 +105,33 @@ namespace Rhinox.Grappler.Recognition
                 }
 
             }
-            currentGesture.onRecognised?.Invoke();
-
-            if (currentGesture != base._previousGesture)
+            switch (handedness)
             {
-                base._previousGesture.onUnRecognised?.Invoke();
+                case Hand.Left:
+                    if (currentGesture != base._previousGestureLeftHand)
+                    {
+                        currentGesture.onRecognised?.Invoke();
+                        base._previousGestureLeftHand.onUnRecognised?.Invoke();
+                    }
+
+                    if (currentGesture.name == null)
+                        return;
+
+                    base._previousGestureLeftHand = currentGesture;
+                    break;
+                case Hand.Right:
+                    if (currentGesture != base._previousGestureRightHand)
+                    {
+                        currentGesture.onRecognised?.Invoke();
+                        base._previousGestureRightHand.onUnRecognised?.Invoke();
+                    }
+
+                    if (currentGesture.name == null)
+                        return;
+
+                    base._previousGestureRightHand = currentGesture;
+                    break;
             }
-            base._previousGesture = currentGesture;
         }
 
         public override bool GetIsEnabled()

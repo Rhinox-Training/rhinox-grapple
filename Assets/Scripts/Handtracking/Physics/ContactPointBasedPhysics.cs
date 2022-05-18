@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Rhinox.Grappler.HandPhysics
 {
-    public class ContactPointBasedPhysics : IPhysicsService
+    public class ContactPointBasedPhysics : BasePhysicsService
     {
         protected static GameObject LeftHandConnectedObject = null;
         protected static int LeftHandConnections = 0;
@@ -306,7 +306,7 @@ namespace Rhinox.Grappler.HandPhysics
 
         private ConfigurableJoint _leftHandRotationalJoint = null;
         private ConfigurableJoint _rightHandRotationalJoint = null;
-        public bool GetIsEnabled(Hand handedness)
+        public override bool GetIsEnabled(Hand handedness)
         {
             switch (handedness)
             {
@@ -319,7 +319,7 @@ namespace Rhinox.Grappler.HandPhysics
 
         }
 
-        public bool GetIsInitialised()
+        public override bool GetIsInitialised()
         {
             return _isInitialised;
         }
@@ -332,7 +332,7 @@ namespace Rhinox.Grappler.HandPhysics
         /// </summary>
         /// <param name="boneManager"></param>
         /// <param name="controller"></param>
-        public void Initialise(BoneManager boneManager, HandPhysicsController controller)
+        public override void Initialise(BoneManager boneManager, HandPhysicsController controller)
         {
             _controller = controller;
 
@@ -378,7 +378,7 @@ namespace Rhinox.Grappler.HandPhysics
             joint.angularZMotion = ConfigurableJointMotion.Locked;
         }
 
-        public void Update()
+        public override void ManualUpdate()
         {
             foreach (var sensor in _leftHandedSensorObjects)
             {
@@ -411,7 +411,7 @@ namespace Rhinox.Grappler.HandPhysics
             }
         }
 
-        public void SetEnabled(bool newState, Hand handedness)
+        public override void SetEnabled(bool newState, Hand handedness)
         {
             switch (handedness)
             {
@@ -446,7 +446,7 @@ namespace Rhinox.Grappler.HandPhysics
 
         }
 
-        public void SetHandLayer(LayerMask layer)
+        public override void SetHandLayer(LayerMask layer)
         {
             _handLayer = layer;
         }

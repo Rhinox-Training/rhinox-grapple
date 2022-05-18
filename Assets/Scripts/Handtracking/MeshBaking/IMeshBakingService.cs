@@ -1,4 +1,5 @@
 ﻿using Rhinox.Grappler.BoneManagement;
+using System;
 using UnityEngine;
 
 namespace Rhinox.Grappler.MeshBaking
@@ -12,4 +13,15 @@ namespace Rhinox.Grappler.MeshBaking
 
     }
 
+    [Serializable]
+    public abstract class BaseMeshBakingService : MonoBehaviour, IMeshBakingService
+    {
+        public abstract void BakeMesh(Hand handedness, GameObject parentObj);
+
+        public abstract bool GetIsInitialised();
+
+        public abstract void Initialise(BoneManager boneManager, HandPhysicsController controller);
+
+        public abstract void RemoveMesh(Hand handedness);
+    }
 }

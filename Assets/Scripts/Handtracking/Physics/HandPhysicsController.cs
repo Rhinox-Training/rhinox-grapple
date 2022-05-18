@@ -8,20 +8,22 @@ namespace Rhinox.Grappler
 {
     public class HandPhysicsController : MonoBehaviour
     {
-       [HideInInspector]
-        public List<HandPhysics.IPhysicsService> PhysicsServices { private set; get; } = null;
+        [Header("Physics Resolvers")]
+        public List<HandPhysics.BasePhysicsService> PhysicsServices;
 
-        [HideInInspector]
-        public MeshBaking.IMeshBakingService MeshBakingService { private set; get; } = null;
+        [Header("Mesh baking")]
+        public MeshBaking.BaseMeshBakingService MeshBakingService;
 
-        [HideInInspector]
-        public MaterialManagement.IMaterialService MaterialService { private set; get; } = null;
+        [Header("Material Management")]
+        public MaterialManagement.BaseMaterialService MaterialService;
 
-        [HideInInspector]
-        public Recognition.BaseRecognitionService RecognitionService { private set; get; } = null;
+        [Header("Recognition system")]
+        public Recognition.BaseRecognitionService RecognitionService;
 
 
         private BoneManagement.BoneManager _boneManager = null;
+
+        [Header("Settings")]
         [SerializeField] private LayerMask _handLayer = 0;
         [SerializeField] public Material OpaqueHandMaterial = null;
         [SerializeField] public Material SeethroughHandMaterial = null;
@@ -49,9 +51,7 @@ namespace Rhinox.Grappler
 
         private void SetupPhysicServices()
         {
-            PhysicsServices = new List<HandPhysics.IPhysicsService>();
-            PhysicsServices.Add(new HandPhysics.ProxyPhysics());
-            PhysicsServices.Add(new HandPhysics.ContactPointBasedPhysics());
+            PhysicsServices = new List<HandPhysics.BasePhysicsService>();
 
             foreach (var physicsService in PhysicsServices)
             {
@@ -73,7 +73,6 @@ namespace Rhinox.Grappler
 
         private void SetupMeshBaking()
         {
-            MeshBakingService = new MeshBaking.OculusMeshBakingService();
             MeshBakingService.Initialise(_boneManager,this);
         }
 
@@ -125,7 +124,7 @@ namespace Rhinox.Grappler
             foreach (var physicsService in PhysicsServices)
             {
                 if(physicsService.GetIsInitialised())
-                    physicsService.Update();
+                    physicsService.ManualUpdate();
             }
         }
 
