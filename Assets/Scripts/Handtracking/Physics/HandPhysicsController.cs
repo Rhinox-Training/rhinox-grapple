@@ -51,8 +51,6 @@ namespace Rhinox.Grappler
 
         private void SetupPhysicServices()
         {
-            PhysicsServices = new List<HandPhysics.BasePhysicsService>();
-
             foreach (var physicsService in PhysicsServices)
             {
                 physicsService.SetHandLayer(_handLayer);

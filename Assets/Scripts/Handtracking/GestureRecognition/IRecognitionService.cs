@@ -63,8 +63,14 @@ namespace Rhinox.Grappler.Recognition
         public List<RhinoxGesture> LeftHandGestures;
         public List<RhinoxGesture> RightHandGestures;
 
-        protected RhinoxGesture _previousGestureLeftHand = new RhinoxGesture();
-        protected RhinoxGesture _previousGestureRightHand = new RhinoxGesture();
+        public RhinoxGesture _previousGestureLeftHand = new RhinoxGesture();
+        public RhinoxGesture _currentGestureLeftHand = new RhinoxGesture();
+
+        public RhinoxGesture _previousGestureRightHand = new RhinoxGesture();
+        public RhinoxGesture _currentGestureRightHand = new RhinoxGesture();
+
+        public UnityEvent OnLeftHandGestureRecognised = new UnityEvent();
+        public UnityEvent OnRightHandGestureRecognised =  new UnityEvent();
 
 
         [HideInInspector]

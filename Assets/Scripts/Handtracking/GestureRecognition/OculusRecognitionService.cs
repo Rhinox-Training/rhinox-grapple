@@ -108,28 +108,32 @@ namespace Rhinox.Grappler.Recognition
             switch (handedness)
             {
                 case Hand.Left:
-                    if (currentGesture != base._previousGestureLeftHand)
+                    _currentGestureLeftHand = currentGesture;
+                    if (_currentGestureLeftHand != base._previousGestureLeftHand)
                     {
-                        currentGesture.onRecognised?.Invoke();
+                        base.OnLeftHandGestureRecognised?.Invoke();
+                        _currentGestureLeftHand.onRecognised?.Invoke();
                         base._previousGestureLeftHand.onUnRecognised?.Invoke();
                     }
 
-                    if (currentGesture.name == null)
+                    if (_currentGestureLeftHand.name == null)
                         return;
-
-                    base._previousGestureLeftHand = currentGesture;
+                    base._previousGestureLeftHand = _currentGestureLeftHand;
                     break;
                 case Hand.Right:
-                    if (currentGesture != base._previousGestureRightHand)
+                    _currentGestureRightHand = currentGesture;
+                    if (_currentGestureRightHand != base._previousGestureRightHand)
                     {
-                        currentGesture.onRecognised?.Invoke();
+                        base.OnRightHandGestureRecognised?.Invoke();
+                        _currentGestureRightHand.onRecognised?.Invoke();
                         base._previousGestureRightHand.onUnRecognised?.Invoke();
                     }
 
-                    if (currentGesture.name == null)
+                    if (_currentGestureRightHand.name == null)
                         return;
 
-                    base._previousGestureRightHand = currentGesture;
+
+                    base._previousGestureRightHand = _currentGestureRightHand;
                     break;
             }
         }
@@ -154,6 +158,7 @@ namespace Rhinox.Grappler.Recognition
 
             base.IsEnabled = true;
             base.IsInitialised = false;
+
             _unityBoneService = boneManager.GetBoneConvertorService() as UnityXRBoneService;
             if (_unityBoneService == null)
             {
