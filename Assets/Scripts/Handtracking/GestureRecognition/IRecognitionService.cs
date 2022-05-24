@@ -74,10 +74,10 @@ namespace Rhinox.Grappler.Recognition
 
 
         [HideInInspector]
-        public bool IsInitialised;
+        public bool IsInitialised = false;
 
         [HideInInspector]
-        public bool IsEnabled;
+        public bool IsEnabled = true;
 
         public abstract bool GetIsEnabled();
         public abstract bool GetIsInitialised();

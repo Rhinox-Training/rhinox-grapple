@@ -17,12 +17,12 @@ namespace Rhinox.Grappler.Recognition
 
         private void Update()
         {
-            HandleSaving();
-            if (IsInitialised && IsEnabled)
+            if (base.IsInitialised && base.IsEnabled)
             {
+                HandleSaving();
+
                 HandleRecognition(ref LeftHandGestures, _unityBoneService.GetOculusSkeleton(Hand.Left), Hand.Left);
                 HandleRecognition(ref RightHandGestures, _unityBoneService.GetOculusSkeleton(Hand.Right), Hand.Right);
-
             }
         }
 

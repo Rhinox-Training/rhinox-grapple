@@ -20,6 +20,10 @@ public class GestureBasedTeleporting : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private Hand _handedness = Hand.Left;
     [SerializeField] private int _originBoneIdx = -1;
+    [SerializeField] private LayerMask _handLayer;
+    [SerializeField] private float _teleportTime = 1.0f;
+    private float _teleportTimer = -1.0f;
+
 
     private bool _isInitialised = false;
     private bool _isTeleporting = false;
@@ -28,6 +32,8 @@ public class GestureBasedTeleporting : MonoBehaviour
 
     private Transform _raycastOrigin = null;
     private Vector3 _teleportLocation = Vector3.zero;
+
+    private Coroutine _teleportCountDownCoroutine = null;
 
     private void Start()
     {
@@ -62,22 +68,33 @@ public class GestureBasedTeleporting : MonoBehaviour
             return;
 
         Debug.Log("Teleporting");
-        RaycastHit hit;
-        Physics.Raycast(_raycastOrigin.position, _raycastOrigin.forward, out hit, float.MaxValue);
-        if (hit.collider != null)
+
+        // there is no countdown for a teleport sequence
+        if (_teleportCountDownCoroutine == null)
         {
-            _teleportLocation = hit.point;
-
-            _lr.enabled = true; 
-            Vector3[] linePositions = new Vector3[2];
-            linePositions[0] = _raycastOrigin.position;
-            linePositions[1] = _teleportLocation;
-            _lr.SetPositions(linePositions);
+            _lr.enabled = true;
+            RaycastHit hit;
+            Physics.Raycast(_raycastOrigin.position, -_raycastOrigin.right, out hit, float.MaxValue, ~_handLayer);
+            if (hit.collider != null)
+            {
+                _teleportLocation = hit.point;
+                // set line renderer to the correct location
+                Vector3[] linePositions = new Vector3[2];
+                linePositions[0] = _raycastOrigin.position;
+                linePositions[1] = _teleportLocation;
+                _lr.SetPositions(linePositions);
+            }
+            else
+            {
+                // set the line renderer to an arbitrary location as to make it look like a straight line
+                Vector3[] linePositions = new Vector3[2];
+                linePositions[0] = _raycastOrigin.position;
+                linePositions[1] = _raycastOrigin.position + (-_raycastOrigin.right * 50);
+                _lr.SetPositions(linePositions);
+            }
         }
-        else
-            _lr.enabled = false;
-
     }
+
     private void OnGestureRecognised()
     {
         switch (_handedness)
@@ -115,19 +132,41 @@ public class GestureBasedTeleporting : MonoBehaviour
                     break;
             }
         }
-
-        if (!_isTeleporting)
-            return;
-
-        _objectToTeleport.transform.position = _teleportLocation;
+        _teleportCountDownCoroutine = StartCoroutine(Coroutine_Teleport());
     }
 
     private void AbortTeleport()
     {
-        if (!_isInitialised || !_isTeleporting)
+        if (!_isInitialised)
             return;
 
+        _lr.enabled = false;
         _isTeleporting = false;
+        if (_teleportCountDownCoroutine != null)
+        {
+            StopCoroutine(_teleportCountDownCoroutine);
+            _teleportCountDownCoroutine = null;
+        }
+    }
+
+    private IEnumerator Coroutine_Teleport()
+    {
+        _teleportTimer = _teleportTime;
+        while ((_teleportTimer -= Time.deltaTime) > 0.0f) 
+        {
+            // make sure to update the line
+            Vector3[] linePositions = new Vector3[2];
+            linePositions[0] = _raycastOrigin.position;
+            linePositions[1] = _teleportLocation;
+            _lr.SetPositions(linePositions);
+
+            // circle on the ground
+
+            yield return null;
+        }
+
+        _objectToTeleport.transform.position = _teleportLocation;
+        yield return null;
     }
 
 }

@@ -31,8 +31,7 @@ namespace Rhinox.Grappler
 
         public bool IsInitialised { get; private set; } = false;        
         private void Awake()
-        {
-            SetupLayerCollisions();
+        {           
             SetupBoneManager();
         }
 
@@ -44,6 +43,7 @@ namespace Rhinox.Grappler
             _boneManager.onIsInitialised.AddListener(SetupRecognitionService);
             _boneManager.onIsInitialised.AddListener(SetupMeshBaking);
             _boneManager.onIsInitialised.AddListener(SetupMaterialManagement);
+            _boneManager.onIsInitialised.AddListener(SetupLayerCollisions);
 
             _boneManager.SetBoneConvertorService(new BoneManagement.UnityXRBoneService());
 

@@ -3213,6 +3213,92 @@ MonoBehaviour:
     onUnRecognised:
       m_PersistentCalls:
         m_Calls: []
+  - name: StartTeleport
+    fingerPositions:
+    - {x: 0.000000026903054, y: 0.0000000056752896, z: -0.000000018956044}
+    - {x: 0.000000026903054, y: 0.0000000056752896, z: -0.000000018956044}
+    - {x: 0.020069454, y: 0.011554072, z: 0.010496471}
+    - {x: 0.033356044, y: 0.013778641, z: 0.031381115}
+    - {x: 0.056588292, y: 0.017964112, z: 0.05373808}
+    - {x: 0.080081195, y: 0.015820643, z: 0.077934414}
+    - {x: 0.09599638, y: 0.007316484, z: 0.023550669}
+    - {x: 0.13351884, y: 0.009168113, z: 0.018343626}
+    - {x: 0.1574365, y: 0.0114061795, z: 0.014655078}
+    - {x: 0.09564672, y: 0.0025432173, z: 0.0017258554}
+    - {x: 0.11561817, y: 0.040316246, z: -0.0024053887}
+    - {x: 0.0894512, y: 0.046126015, z: 0.0039596227}
+    - {x: 0.088693924, y: 0.0065293782, z: -0.01746525}
+    - {x: 0.09585222, y: 0.044835832, z: -0.016027363}
+    - {x: 0.071030684, y: 0.04655834, z: -0.0066963434}
+    - {x: 0.034073718, y: 0.009419803, z: -0.022998605}
+    - {x: 0.07789596, y: 0.013691221, z: -0.03505409}
+    - {x: 0.07444757, y: 0.04267923, z: -0.025485832}
+    - {x: 0.05593666, y: 0.04176704, z: -0.017175244}
+    - {x: 0.09192297, y: 0.013798285, z: 0.09942612}
+    - {x: 0.1791758, y: 0.009223105, z: 0.009766891}
+    - {x: 0.07056717, y: 0.031194549, z: 0.010673791}
+    - {x: 0.054366864, y: 0.029999498, z: -0.00017439196}
+    - {x: 0.04163891, y: 0.026554078, z: -0.010373058}
+    onRecognised:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1733320533}
+          m_MethodName: StartTeleport
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    onUnRecognised:
+      m_PersistentCalls:
+        m_Calls: []
+  - name: ConfirmTeleport
+    fingerPositions:
+    - {x: 0.00000002640103, y: 0.0000000039741472, z: -0.000000032736768}
+    - {x: 0.00000002640103, y: 0.0000000039741472, z: -0.000000032736768}
+    - {x: 0.020069426, y: 0.011554121, z: 0.010496512}
+    - {x: 0.035607036, y: 0.01840235, z: 0.028644055}
+    - {x: 0.06312278, y: 0.021213464, z: 0.045734197}
+    - {x: 0.09634639, y: 0.0273795, z: 0.045351863}
+    - {x: 0.09599638, y: 0.007316421, z: 0.023550669}
+    - {x: 0.13353616, y: 0.0064992853, z: 0.018204838}
+    - {x: 0.15754406, y: 0.00654171, z: 0.01442488}
+    - {x: 0.095646754, y: 0.002543128, z: 0.0017259077}
+    - {x: 0.11811638, y: 0.03873414, z: -0.0035712305}
+    - {x: 0.092414886, y: 0.045815457, z: 0.0033763174}
+    - {x: 0.08869392, y: 0.006529343, z: -0.017465265}
+    - {x: 0.09644745, y: 0.044736933, z: -0.01659232}
+    - {x: 0.071981736, y: 0.04610641, z: -0.006311312}
+    - {x: 0.0340737, y: 0.009419807, z: -0.022998631}
+    - {x: 0.077895984, y: 0.013691166, z: -0.03505409}
+    - {x: 0.07623465, y: 0.042997457, z: -0.025991667}
+    - {x: 0.0580024, y: 0.043478988, z: -0.017052794}
+    - {x: 0.113096155, y: 0.035959676, z: 0.029476296}
+    - {x: 0.17898221, y: 0.0023687498, z: 0.00950049}
+    - {x: 0.07512348, y: 0.02927815, z: 0.010598764}
+    - {x: 0.057644546, y: 0.027403494, z: -0.000061533414}
+    - {x: 0.043866444, y: 0.028217975, z: -0.0100239795}
+    onRecognised:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1733320533}
+          m_MethodName: ConfirmTeleport
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    onUnRecognised:
+      m_PersistentCalls:
+        m_Calls: []
   RightHandGestures:
   - name: Openhand
     fingerPositions:
@@ -3322,11 +3408,265 @@ MonoBehaviour:
     onUnRecognised:
       m_PersistentCalls:
         m_Calls: []
+  _previousGestureLeftHand:
+    name: Openhand
+    fingerPositions:
+    - {x: 0, y: 0, z: 0}
+    - {x: 0, y: 0, z: 0}
+    - {x: 0.020069335, y: 0.0115540745, z: 0.0104965195}
+    - {x: 0.03331947, y: 0.013706257, z: 0.031411838}
+    - {x: 0.055499017, y: 0.020082558, z: 0.054313812}
+    - {x: 0.08392753, y: 0.026703302, z: 0.071341954}
+    - {x: 0.09599624, y: 0.007316476, z: 0.023550656}
+    - {x: 0.13372354, y: 0.0046020984, z: 0.026336951}
+    - {x: 0.15794834, y: 0.00327577, z: 0.027775075}
+    - {x: 0.09564666, y: 0.0025431393, z: 0.0017258868}
+    - {x: 0.13802172, y: -0.0008831708, z: -0.004219253}
+    - {x: 0.16528128, y: -0.00075918465, z: -0.008203733}
+    - {x: 0.088693865, y: 0.0065292884, z: -0.017465282}
+    - {x: 0.12617557, y: 0.0011641732, z: -0.02679433}
+    - {x: 0.15208387, y: 0.002597816, z: -0.032525606}
+    - {x: 0.03407361, y: 0.009419812, z: -0.022998583}
+    - {x: 0.077895895, y: 0.013691168, z: -0.035054106}
+    - {x: 0.105368085, y: 0.009801667, z: -0.04824103}
+    - {x: 0.12331204, y: 0.010737759, z: -0.05771151}
+    - {x: 0.10388846, y: 0.033705354, z: 0.08394129}
+    - {x: 0.18015775, y: 0.00045375695, z: 0.027578238}
+    - {x: 0.18952838, y: -0.0049404143, z: -0.012589544}
+    - {x: 0.17596577, y: 0.00092898123, z: -0.037139423}
+    - {x: 0.14339267, y: 0.008963082, z: -0.06641502}
+    onRecognised:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1114040581}
+          m_MethodName: EnableLeftHandService
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1114040581}
+          m_MethodName: SetLeftHandMaterial
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1733320533}
+          m_MethodName: StartTeleport
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    onUnRecognised:
+      m_PersistentCalls:
+        m_Calls: []
+  _currentGestureLeftHand:
+    name: Openhand
+    fingerPositions:
+    - {x: 0, y: 0, z: 0}
+    - {x: 0, y: 0, z: 0}
+    - {x: 0.020069335, y: 0.0115540745, z: 0.0104965195}
+    - {x: 0.03331947, y: 0.013706257, z: 0.031411838}
+    - {x: 0.055499017, y: 0.020082558, z: 0.054313812}
+    - {x: 0.08392753, y: 0.026703302, z: 0.071341954}
+    - {x: 0.09599624, y: 0.007316476, z: 0.023550656}
+    - {x: 0.13372354, y: 0.0046020984, z: 0.026336951}
+    - {x: 0.15794834, y: 0.00327577, z: 0.027775075}
+    - {x: 0.09564666, y: 0.0025431393, z: 0.0017258868}
+    - {x: 0.13802172, y: -0.0008831708, z: -0.004219253}
+    - {x: 0.16528128, y: -0.00075918465, z: -0.008203733}
+    - {x: 0.088693865, y: 0.0065292884, z: -0.017465282}
+    - {x: 0.12617557, y: 0.0011641732, z: -0.02679433}
+    - {x: 0.15208387, y: 0.002597816, z: -0.032525606}
+    - {x: 0.03407361, y: 0.009419812, z: -0.022998583}
+    - {x: 0.077895895, y: 0.013691168, z: -0.035054106}
+    - {x: 0.105368085, y: 0.009801667, z: -0.04824103}
+    - {x: 0.12331204, y: 0.010737759, z: -0.05771151}
+    - {x: 0.10388846, y: 0.033705354, z: 0.08394129}
+    - {x: 0.18015775, y: 0.00045375695, z: 0.027578238}
+    - {x: 0.18952838, y: -0.0049404143, z: -0.012589544}
+    - {x: 0.17596577, y: 0.00092898123, z: -0.037139423}
+    - {x: 0.14339267, y: 0.008963082, z: -0.06641502}
+    onRecognised:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1114040581}
+          m_MethodName: EnableLeftHandService
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1114040581}
+          m_MethodName: SetLeftHandMaterial
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1733320533}
+          m_MethodName: StartTeleport
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    onUnRecognised:
+      m_PersistentCalls:
+        m_Calls: []
+  _previousGestureRightHand:
+    name: Openhand
+    fingerPositions:
+    - {x: 0, y: 0, z: 0}
+    - {x: 0, y: 0, z: 0}
+    - {x: -0.020069266, y: -0.01155412, z: -0.010496532}
+    - {x: -0.034531306, y: -0.016153092, z: -0.030177716}
+    - {x: -0.060020283, y: -0.020104881, z: -0.049971294}
+    - {x: -0.08914628, y: -0.021266771, z: -0.0670681}
+    - {x: -0.09599622, y: -0.0073164594, z: -0.023550682}
+    - {x: -0.13378869, y: -0.008530706, z: -0.020595111}
+    - {x: -0.15768643, y: -0.012337232, z: -0.01834149}
+    - {x: -0.09564661, y: -0.0025431581, z: -0.0017259017}
+    - {x: -0.13788156, y: -0.009078758, z: 0.0023019568}
+    - {x: -0.16487896, y: -0.013800387, z: 0.0050988314}
+    - {x: -0.0886938, y: -0.0065292995, z: 0.01746524}
+    - {x: -0.12680541, y: -0.008235186, z: 0.025545571}
+    - {x: -0.15247308, y: -0.012963598, z: 0.030541355}
+    - {x: -0.034073535, y: -0.009419856, z: 0.022998555}
+    - {x: -0.07789586, y: -0.013691157, z: 0.03505406}
+    - {x: -0.10638829, y: -0.010754818, z: 0.046158236}
+    - {x: -0.1249012, y: -0.015391726, z: 0.053109724}
+    - {x: -0.104126886, y: -0.02102769, z: -0.08660612}
+    - {x: -0.17976886, y: -0.011624277, z: -0.014719828}
+    - {x: -0.18962812, y: -0.015001789, z: 0.008365727}
+    - {x: -0.17634094, y: -0.016389217, z: 0.034147557}
+    - {x: -0.145849, y: -0.01830048, z: 0.059014037}
+    onRecognised:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1114040581}
+          m_MethodName: EnableRightHandService
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1114040581}
+          m_MethodName: SetRightHandMaterial
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    onUnRecognised:
+      m_PersistentCalls:
+        m_Calls: []
+  _currentGestureRightHand:
+    name: Openhand
+    fingerPositions:
+    - {x: 0, y: 0, z: 0}
+    - {x: 0, y: 0, z: 0}
+    - {x: -0.020069266, y: -0.01155412, z: -0.010496532}
+    - {x: -0.034531306, y: -0.016153092, z: -0.030177716}
+    - {x: -0.060020283, y: -0.020104881, z: -0.049971294}
+    - {x: -0.08914628, y: -0.021266771, z: -0.0670681}
+    - {x: -0.09599622, y: -0.0073164594, z: -0.023550682}
+    - {x: -0.13378869, y: -0.008530706, z: -0.020595111}
+    - {x: -0.15768643, y: -0.012337232, z: -0.01834149}
+    - {x: -0.09564661, y: -0.0025431581, z: -0.0017259017}
+    - {x: -0.13788156, y: -0.009078758, z: 0.0023019568}
+    - {x: -0.16487896, y: -0.013800387, z: 0.0050988314}
+    - {x: -0.0886938, y: -0.0065292995, z: 0.01746524}
+    - {x: -0.12680541, y: -0.008235186, z: 0.025545571}
+    - {x: -0.15247308, y: -0.012963598, z: 0.030541355}
+    - {x: -0.034073535, y: -0.009419856, z: 0.022998555}
+    - {x: -0.07789586, y: -0.013691157, z: 0.03505406}
+    - {x: -0.10638829, y: -0.010754818, z: 0.046158236}
+    - {x: -0.1249012, y: -0.015391726, z: 0.053109724}
+    - {x: -0.104126886, y: -0.02102769, z: -0.08660612}
+    - {x: -0.17976886, y: -0.011624277, z: -0.014719828}
+    - {x: -0.18962812, y: -0.015001789, z: 0.008365727}
+    - {x: -0.17634094, y: -0.016389217, z: 0.034147557}
+    - {x: -0.145849, y: -0.01830048, z: 0.059014037}
+    onRecognised:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1114040581}
+          m_MethodName: EnableRightHandService
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1114040581}
+          m_MethodName: SetRightHandMaterial
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    onUnRecognised:
+      m_PersistentCalls:
+        m_Calls: []
+  OnLeftHandGestureRecognised:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRightHandGestureRecognised:
+    m_PersistentCalls:
+      m_Calls: []
   IsInitialised: 0
-  IsEnabled: 0
+  IsEnabled: 1
   _saveLeftPose: 0
   _saveRightPose: 0
   _detectionTreshHold: 0.1
+--- !u!4 &1114040591 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400004, guid: 126d619cf4daa52469682f85c1378b4a,
+    type: 3}
+  m_PrefabInstance: {fileID: 72439034}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1268038357
 GameObject:
   m_ObjectHideFlags: 0
@@ -4047,6 +4387,130 @@ Transform:
   m_Father: {fileID: 520295500}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1733320531 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 109308, guid: 126d619cf4daa52469682f85c1378b4a,
+    type: 3}
+  m_PrefabInstance: {fileID: 72439034}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1733320533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1733320531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9260d5694afd6814c9be1537925b7787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _boneManager: {fileID: 1114040585}
+  _recognitionService: {fileID: 1114040588}
+  _objectToTeleport: {fileID: 1114040591}
+  _handedness: 0
+  _originBoneIdx: 0
+  _handLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  _teleportTime: 1
+--- !u!120 &1733320534
+LineRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1733320531}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
+  m_Parameters:
+    serializedVersion: 3
+    widthMultiplier: 1
+    widthCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0.026798248
+        value: 0.029939651
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    colorGradient:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    numCornerVertices: 0
+    numCapVertices: 0
+    alignment: 0
+    textureMode: 0
+    shadowBias: 0.5
+    generateLightingData: 0
+  m_UseWorldSpace: 1
+  m_Loop: 0
 --- !u!1 &1738250961
 GameObject:
   m_ObjectHideFlags: 0
