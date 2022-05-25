@@ -6,6 +6,7 @@ using Rhinox.Grappler.Recognition;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(LineRenderer))]
 public class GestureBasedTeleporting : MonoBehaviour
@@ -14,7 +15,13 @@ public class GestureBasedTeleporting : MonoBehaviour
     [SerializeField] private BoneManager _boneManager = null;
     [SerializeField] private BaseRecognitionService _recognitionService = null;
     [SerializeField] private Transform _objectToTeleport = null;
+    
+    [SerializeField] private GameObject _teleportIndicatorPrefab = null;
+    private GameObject _teleportIndicatorObject = null;
+
+
     private LineRenderer _lr = null;
+
 
 
     [Header("Settings")]
@@ -22,11 +29,15 @@ public class GestureBasedTeleporting : MonoBehaviour
     [SerializeField] private int _originBoneIdx = -1;
     [SerializeField] private LayerMask _handLayer;
     [SerializeField] private float _teleportTime = 1.0f;
+
     private float _teleportTimer = -1.0f;
 
 
     private bool _isInitialised = false;
+    
     private bool _isTeleporting = false;
+    private bool _canTeleport = false;
+
 
     private RhinoxGesture _confirmTeleportGesture = new RhinoxGesture();
 
@@ -72,9 +83,14 @@ public class GestureBasedTeleporting : MonoBehaviour
         // there is no countdown for a teleport sequence
         if (_teleportCountDownCoroutine == null)
         {
+            int polarity = 0;
+            if (_handedness == Hand.Left)
+                polarity = -1;
+            else polarity = 1;
+
             _lr.enabled = true;
             RaycastHit hit;
-            Physics.Raycast(_raycastOrigin.position, -_raycastOrigin.right, out hit, float.MaxValue, ~_handLayer);
+            Physics.Raycast(_raycastOrigin.position, polarity * _raycastOrigin.right, out hit, float.MaxValue, ~_handLayer);
             if (hit.collider != null)
             {
                 _teleportLocation = hit.point;
@@ -83,14 +99,22 @@ public class GestureBasedTeleporting : MonoBehaviour
                 linePositions[0] = _raycastOrigin.position;
                 linePositions[1] = _teleportLocation;
                 _lr.SetPositions(linePositions);
+                _lr.startColor = Color.green;
+                _lr.endColor = Color.green;
+
+                _canTeleport = true;
             }
             else
             {
                 // set the line renderer to an arbitrary location as to make it look like a straight line
                 Vector3[] linePositions = new Vector3[2];
                 linePositions[0] = _raycastOrigin.position;
-                linePositions[1] = _raycastOrigin.position + (-_raycastOrigin.right * 50);
+                linePositions[1] = _raycastOrigin.position + (polarity * _raycastOrigin.right * 50);
                 _lr.SetPositions(linePositions);
+                _lr.startColor = Color.red;
+                _lr.endColor = Color.red;
+
+                _canTeleport = false;
             }
         }
     }
@@ -114,7 +138,7 @@ public class GestureBasedTeleporting : MonoBehaviour
     {
         if (!_isInitialised)
             return;
-        _isTeleporting = true;
+        _isTeleporting = true;    
     }
     public void ConfirmTeleport()
     {
@@ -132,7 +156,9 @@ public class GestureBasedTeleporting : MonoBehaviour
                     break;
             }
         }
-        _teleportCountDownCoroutine = StartCoroutine(Coroutine_Teleport());
+
+        if(_canTeleport)
+            _teleportCountDownCoroutine = StartCoroutine(Coroutine_Teleport());
     }
 
     private void AbortTeleport()
@@ -146,12 +172,19 @@ public class GestureBasedTeleporting : MonoBehaviour
         {
             StopCoroutine(_teleportCountDownCoroutine);
             _teleportCountDownCoroutine = null;
+
+            GameObject.Destroy(_teleportIndicatorObject);
+            _teleportIndicatorObject = null;
         }
     }
 
     private IEnumerator Coroutine_Teleport()
     {
         _teleportTimer = _teleportTime;
+        _teleportIndicatorObject = GameObject.Instantiate(_teleportIndicatorPrefab);
+        var circleIndicator = _teleportIndicatorObject.GetComponentInChildren<Image>();
+        circleIndicator.fillMethod = Image.FillMethod.Radial360;
+
         while ((_teleportTimer -= Time.deltaTime) > 0.0f) 
         {
             // make sure to update the line
@@ -160,13 +193,19 @@ public class GestureBasedTeleporting : MonoBehaviour
             linePositions[1] = _teleportLocation;
             _lr.SetPositions(linePositions);
 
-            // circle on the ground
-
+            // manage teleport indicator object
+            var val = 1 - (_teleportTimer / _teleportTime);
+            Debug.Log(val);
+            circleIndicator.fillAmount = val; 
+            _teleportIndicatorObject.transform.position = _teleportLocation;
             yield return null;
         }
+
+        GameObject.Destroy(_teleportIndicatorObject);
+        _teleportIndicatorObject = null;
+        _lr.enabled = false;
 
         _objectToTeleport.transform.position = _teleportLocation;
         yield return null;
     }
-
 }
