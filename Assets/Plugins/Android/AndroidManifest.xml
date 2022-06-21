@@ -15,4 +15,6 @@
             <meta-data android:name="com.oculus.handtracking.version" android:value="V2.0"/>
         </activity>
     </application>
+  <uses-permission android:name="com.oculus.permission.HAND_TRACKING" />
+  <uses-feature android:name="oculus.software.handtracking" android:required="false" />
 </manifest>
