@@ -1,8 +1,10 @@
+#if USING_VOLT
+
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.Layouts;
@@ -36,7 +38,7 @@ namespace Rhinox.Grappler.Teleportation.VOLT
         public Vector2Control simulatedRightTriggerButton { get; private set; }
         public Vector2Control simulatedLeftTriggerButton { get; private set; }
 
-        #region setup
+#region setup
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void InitializeInPlayer() { }
@@ -45,7 +47,7 @@ namespace Rhinox.Grappler.Teleportation.VOLT
             InputSystem.RegisterLayout<GrapplerFakeXRDevice>();
         }
 
-        #endregion
+#endregion
 
         protected override void FinishSetup()
         {
@@ -58,3 +60,4 @@ namespace Rhinox.Grappler.Teleportation.VOLT
     }
 }
 
+#endif

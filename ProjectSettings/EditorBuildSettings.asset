@@ -5,9 +5,9 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Telerik/XR Core/Demos/Cross Platform Cube Hands Demo.unity
-    guid: a046414fad266284f92fbf4ec8464d89
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: b68aad9db18931c43aca39446cb538cf,
       type: 2}

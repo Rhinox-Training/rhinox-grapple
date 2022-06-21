@@ -1,4 +1,7 @@
-﻿using Rhinox.Grappler.BoneManagement;
+﻿#if USING_OVR
+
+
+using Rhinox.Grappler.BoneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -138,3 +141,5 @@ namespace Rhinox.Grappler.MeshBaking
     }
 
 }
+
+#endif

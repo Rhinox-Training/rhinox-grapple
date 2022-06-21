@@ -1,9 +1,10 @@
+#if USING_OVR
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
 
 namespace Rhinox.Grappler.BoneManagement
 {
@@ -158,3 +159,4 @@ namespace Rhinox.Grappler.BoneManagement
     }
 }
 
+#endif

@@ -1,4 +1,6 @@
-﻿using Rhinox.Grappler.BoneManagement;
+﻿#if USING_OVR
+
+using Rhinox.Grappler.BoneManagement;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -176,3 +178,4 @@ namespace Rhinox.Grappler.Recognition
 
 }
 
+#endif

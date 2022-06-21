@@ -1,3 +1,4 @@
+#if USING_VOLT
 using Rhinox.Grappler.Teleportation.VOLT;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -45,3 +46,4 @@ namespace Rhinox.Grappler.EventManagement.VOLT
 
     
 }
+#endif
