@@ -9,7 +9,6 @@
   ],
   "category": "CSharp",
   "dependencies": {
-        "com.rhinox.open.lightspeed": "1.0.0"
   },
   "type": "library"
 }

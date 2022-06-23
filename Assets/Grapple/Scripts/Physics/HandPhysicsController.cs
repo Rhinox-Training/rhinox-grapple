@@ -47,8 +47,13 @@ namespace Rhinox.Grappler
             _boneManager.onIsInitialised.AddListener(SetupMaterialManagement);
             _boneManager.onIsInitialised.AddListener(SetupLayerCollisions);
 
+#if USING_OVR
             _boneManager.SetBoneConvertorService(new BoneManagement.UnityXRBoneService());
+#endif
 
+#if USING_TELERIK
+            _boneManager.SetBoneConvertorService(new BoneManagement.TelerikBoneService());
+#endif
         }
 
         private void SetupPhysicServices()
@@ -78,7 +83,15 @@ namespace Rhinox.Grappler
 
         private void SetupMaterialManagement()
         {
+
+#if USING_OVR
             MaterialService = new MaterialManagement.OculusMaterialService();
+#endif
+
+#if USING_TELERIK
+            _boneManager.SetBoneConvertorService(new BoneManagement.TelerikBoneService());
+#endif
+
             MaterialService.Initialise(_boneManager,this);
         }
 
