@@ -1,0 +1,14 @@
+{
+  "name": "com.rhinox.Grapple",
+  "displayName": "Rhinox Grapple",
+  "version": "1.0.0",
+  "unity": "2020.3.34f1",
+  "description": "A physics framework for hand tracking applications.",
+  "keywords": [
+    "Grapple"
+  ],
+  "category": "CSharp",
+  "dependencies": {
+  },
+  "type": "library"
+}
