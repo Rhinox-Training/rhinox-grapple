@@ -5,6 +5,9 @@ using UnityEngine.Events;
 
 namespace Rhinox.Grappler.EventManagement
 {
+    public sealed class GrappleEvent : UnityEvent<GameObject, GameObject, BoneManagement.Hand>
+    {}
+
     public class GrapplerEventManager : MonoBehaviour
     {
         private static GrapplerEventManager _instance;
@@ -34,22 +37,22 @@ namespace Rhinox.Grappler.EventManagement
         /// <summary>
         /// onTouch is called whenever a physics solution has started a collision with another object
         /// </summary>
-        public UnityEvent<GameObject, GameObject, BoneManagement.Hand> OnTouch { get; private set; } = new UnityEvent<GameObject, GameObject, BoneManagement.Hand>();
+        public GrappleEvent OnTouch { get; private set; } = new GrappleEvent();
 
         /// <summary>
         /// OnUnTouched is called whenever a physics solution has ended a collision with another object
         /// </summary>
-        public UnityEvent<GameObject, GameObject, BoneManagement.Hand> OnUnTouched { get; private set; } = new UnityEvent<GameObject, GameObject, BoneManagement.Hand>();
+        public GrappleEvent OnUnTouched { get; private set; } = new GrappleEvent();
 
         /// <summary>
         /// onGrab is called whenever a physics solution has initiated a grabbing behaviour with another object
         /// </summary>
-        public UnityEvent<GameObject, GameObject, BoneManagement.Hand> OnGrab { get; private set; } = new UnityEvent<GameObject, GameObject, BoneManagement.Hand>();
+        public GrappleEvent OnGrab { get; private set; } = new GrappleEvent();
 
         /// <summary>
         /// onDrop is called whenever a physics solution has stopped a grabbing behaviour with another object
         /// </summary>
-        public UnityEvent<GameObject, GameObject, BoneManagement.Hand> OnDrop { get; private set; } = new UnityEvent<GameObject, GameObject, BoneManagement.Hand>();
+        public GrappleEvent OnDrop { get; private set; } = new GrappleEvent();
 
     }
 }
