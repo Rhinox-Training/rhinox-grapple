@@ -2,7 +2,8 @@
     "name": "com.rhinox.open.grapple",
     "rootNamespace": "",
     "references": [
-        ""
+        "Telerik.Unity.XRCore",
+        "Telerik.Unity.XRInteractions"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
