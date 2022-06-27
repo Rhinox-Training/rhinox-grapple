@@ -11,6 +11,7 @@ namespace Rhinox.Grappler.Recognition
     {
         public string name;
         public List<Vector3> fingerPositions;
+        public Quaternion handRotation;
         public UnityEvent onRecognised;
         public UnityEvent onUnRecognised;
 
@@ -35,7 +36,7 @@ namespace Rhinox.Grappler.Recognition
             for (int i = 0; i < fingerPositions.Count; i++)
                 if (fingerPositions[i] != objectToCompareWith.fingerPositions[i])
                     return false;
-           
+
             return true;
         }
 
@@ -71,7 +72,7 @@ namespace Rhinox.Grappler.Recognition
         [HideInInspector] public RhinoxGesture _currentGestureRightHand = new RhinoxGesture();
 
         public UnityEvent OnLeftHandGestureRecognised = new UnityEvent();
-        public UnityEvent OnRightHandGestureRecognised =  new UnityEvent();
+        public UnityEvent OnRightHandGestureRecognised = new UnityEvent();
 
 
         [HideInInspector]
