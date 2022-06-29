@@ -61,6 +61,8 @@ namespace Rhinox.Grappler.Recognition
 
     public abstract class BaseRecognitionService : MonoBehaviour, IRecognitionService
     {
+
+        [Header("Gestures")]
         public List<RhinoxGesture> LeftHandGestures;
         public List<RhinoxGesture> RightHandGestures;
 
