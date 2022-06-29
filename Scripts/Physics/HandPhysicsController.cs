@@ -78,7 +78,7 @@ namespace Rhinox.Grappler
 
         private void SetupMeshBaking()
         {
-            MeshBakingService.Initialise(_boneManager,this);
+            MeshBakingService?.Initialise(_boneManager,this);
         }
 
         private void SetupMaterialManagement()
@@ -92,7 +92,7 @@ namespace Rhinox.Grappler
             _boneManager.SetBoneConvertorService(new BoneManagement.TelerikBoneService());
 #endif
 
-            MaterialService.Initialise(_boneManager,this);
+            MaterialService?.Initialise(_boneManager,this);
         }
 
         private void SetupLayerCollisions()
