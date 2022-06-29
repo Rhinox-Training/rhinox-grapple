@@ -430,6 +430,14 @@ MonoBehaviour:
   _detectionTreshHold: 0.01
   _useRotationalDetectionTreshHold: 1
   _rotationalDetectionTreshHold: 5
+  LeftHandTelerikPinchGestures: []
+  RightHandTelerikPinchGestures: []
+  OnLeftHandTelerikPinchRecognised:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRightHandTelerikPinchRecognised:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1257811379461808044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -477,7 +485,7 @@ MonoBehaviour:
   RecognitionService: {fileID: 1257811379461808043}
   _handLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   OpaqueHandMaterial: {fileID: 0}
   SeethroughHandMaterial: {fileID: 0}
   BakedHandMaterial: {fileID: 0}
