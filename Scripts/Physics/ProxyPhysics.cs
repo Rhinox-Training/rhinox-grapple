@@ -14,6 +14,7 @@ namespace Rhinox.Grappler.HandPhysics
             // settings
             private const float _gracePeriod = 0.5f;
             private float _gracePeriodTimer = -1;
+            private Hand _handedness = Hand.Both;
 
             public bool IsInitialised { get; private set; } = false;
             private bool _prevState = false;
@@ -24,6 +25,7 @@ namespace Rhinox.Grappler.HandPhysics
             private GameObject _proxyObject = null;
             private CapsuleCollider _proxyObjectCapsuleCollider = null;
             private Rigidbody _proxyObjectRigidBody = null;
+            private ProxyPhysicsProxyCollisionEventHandler _eventHandler = null;
 
             // dummy object
             private GameObject _dummyObject = null;
@@ -39,10 +41,11 @@ namespace Rhinox.Grappler.HandPhysics
             /// </summary>
             /// <param name="bone"></param>
             /// <param name="collisionLayer"></param>
-            public ProxyObject(RhinoxBone bone, LayerMask collisionLayer)
+            public ProxyObject(RhinoxBone bone, Hand handedness, LayerMask collisionLayer)
             {
                 _rhinoxBone = bone;
                 _collisionLayer = collisionLayer;
+                _handedness = handedness;
                 _proxyObject = new GameObject("ProxyObject_" + _rhinoxBone.Name);
                 _dummyObject = new GameObject("DummyObject_" + _rhinoxBone.Name);
                 Initialise();
@@ -123,7 +126,6 @@ namespace Rhinox.Grappler.HandPhysics
                 _proxyObject.transform.position = _dummyObject.transform.position;
                 _proxyObject.transform.rotation = _dummyObject.transform.rotation;
 
-                // needs to be made without editor scripts
                 _proxyObjectCapsuleCollider = _proxyObject.AddComponent<CapsuleCollider>();
                 CopyCapsuleColliderValues(_proxyObjectCapsuleCollider, _rhinoxBone.BoneCollisionCapsules[0]);
                 _proxyObjectCapsuleCollider.isTrigger = false;
@@ -145,6 +147,9 @@ namespace Rhinox.Grappler.HandPhysics
                 _connectionJoint.autoConfigureConnectedAnchor = false;
                 _connectionJoint.enablePreprocessing = false;
                 _connectionJoint.connectedAnchor = new Vector3(0, 0, 0);
+
+                _eventHandler = _proxyObject.AddComponent<ProxyPhysicsProxyCollisionEventHandler>();
+                _eventHandler.Initialise(_handedness);
 
                 // re-enable object to enable physics
                 _proxyObject.SetActive(true);
@@ -175,7 +180,7 @@ namespace Rhinox.Grappler.HandPhysics
                 }
 
                 _proxyObject.SetActive(_dummyObject.activeInHierarchy);
-                
+
                 if (_dummyObject.activeInHierarchy == true && _prevState == false)
                 {
                     Rebuild();
@@ -228,13 +233,13 @@ namespace Rhinox.Grappler.HandPhysics
             List<RhinoxBone> leftHandBones = boneManager.GetRhinoxBones(Hand.Left);
             foreach (var Bone in leftHandBones)
             {
-                _leftHandProxyObjects.Add(new ProxyObject(Bone,_handLayer));
+                _leftHandProxyObjects.Add(new ProxyObject(Bone, Hand.Left, _handLayer));
             }
 
             List<RhinoxBone> rightHandBones = boneManager.GetRhinoxBones(Hand.Right);
             foreach (var Bone in rightHandBones)
             {
-                _rightHandProxyObjects.Add(new ProxyObject(Bone, _handLayer));
+                _rightHandProxyObjects.Add(new ProxyObject(Bone, Hand.Right, _handLayer));
             }
             _isInitialised = true;
         }
@@ -289,7 +294,7 @@ namespace Rhinox.Grappler.HandPhysics
             return false;
         }
 
-        public override void SetHandLayer(LayerMask layer) 
+        public override void SetHandLayer(LayerMask layer)
         {
             _handLayer = layer;
         }
