@@ -1,15 +1,19 @@
-﻿using System.Collections;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Rhinox.Grappler;
 using Rhinox.Grappler.BoneManagement;
 using System;
 
 namespace Rhinox.Grappler.HandPhysics
 {
-    public class ProxyPhysics : BasePhysicsService
+    public class KinematicProxyPhysics : BasePhysicsService
     {
-        private class ProxyObject
+        private class KinematicProxyObject
         {
             // settings
             private const float _gracePeriod = 0.5f;
@@ -22,7 +26,7 @@ namespace Rhinox.Grappler.HandPhysics
             private LayerMask _collisionLayer = 0;
 
             // proxy object
-            private GameObject _proxyObject = null;
+            private GameObject _kinematicProxyObject = null;
             private CapsuleCollider _proxyObjectCapsuleCollider = null;
             private Rigidbody _proxyObjectRigidBody = null;
             private ProxyPhysicsProxyCollisionEventHandler _eventHandler = null;
@@ -32,21 +36,18 @@ namespace Rhinox.Grappler.HandPhysics
             private CapsuleCollider _dummyObjectCapsuleCollider = null;
             private Rigidbody _dummyObjectRigidBody = null;
 
-            private Joint _connectionJoint = null;
-
-
             /// <summary>
-            /// The proxy object class is there to handle the dummy and proxy object,
+            /// The KinematicProxy object class is there to handle the dummy and proxy object,
             /// handles the creation and management of them
             /// </summary>
             /// <param name="bone"></param>
             /// <param name="collisionLayer"></param>
-            public ProxyObject(RhinoxBone bone, Hand handedness, LayerMask collisionLayer)
+            public KinematicProxyObject(RhinoxBone bone, Hand handedness, LayerMask collisionLayer)
             {
                 _rhinoxBone = bone;
                 _collisionLayer = collisionLayer;
                 _handedness = handedness;
-                _proxyObject = new GameObject("ProxyObject_" + _rhinoxBone.Name);
+                _kinematicProxyObject = new GameObject("ProxyObject_" + _rhinoxBone.Name);
                 _dummyObject = new GameObject("DummyObject_" + _rhinoxBone.Name);
                 Initialise();
             }
@@ -55,7 +56,7 @@ namespace Rhinox.Grappler.HandPhysics
             {
                 if (_rhinoxBone.BoneCollisionCapsules.Count <= 0)
                 {
-                    GameObject.Destroy(_proxyObject);
+                    GameObject.Destroy(_kinematicProxyObject);
                     GameObject.Destroy(_dummyObject);
                     return;
                 }
@@ -65,28 +66,6 @@ namespace Rhinox.Grappler.HandPhysics
                 SetCollisionLayer();
                 _prevState = true;
                 IsInitialised = true;
-            }
-
-            public void Rebuild()
-            {
-                if (_rhinoxBone.BoneCollisionCapsules.Count <= 0)
-                    return;
-
-                Debug.Log("Rebuilding");
-
-                GameObject.Destroy(_proxyObject);
-                _proxyObject = new GameObject("ProxyObject_" + _rhinoxBone.Name);
-                _proxyObject.SetActive(false);
-
-                _gracePeriodTimer = _gracePeriod;
-
-                BuildProxyObject();
-                SetCollisionLayer();
-            }
-
-            private void Destroy()
-            {
-                GameObject.Destroy(_proxyObject);
             }
 
             /// <summary>
@@ -108,8 +87,6 @@ namespace Rhinox.Grappler.HandPhysics
                 _dummyObject.transform.rotation = _rhinoxBone.BoneCollisionCapsules[0].transform.rotation;
                 _dummyObject.transform.localPosition = new Vector3(0, 0, 0);
 
-
-
                 // re-enable object to enable physics
                 _dummyObject.SetActive(true);
             }
@@ -121,13 +98,13 @@ namespace Rhinox.Grappler.HandPhysics
             private void BuildProxyObject()
             {
                 // disabling object to disable physics
-                _proxyObject.SetActive(false);
+                _kinematicProxyObject.SetActive(false);
 
-                _proxyObject.transform.position = _dummyObject.transform.position;
-                _proxyObject.transform.rotation = _dummyObject.transform.rotation;
+                _kinematicProxyObject.transform.position = _dummyObject.transform.position;
+                _kinematicProxyObject.transform.rotation = _dummyObject.transform.rotation;
 
-                _proxyObjectCapsuleCollider = _proxyObject.AddComponent<CapsuleCollider>();
-                GrappleUtils.CopyCapsuleColliderValues(_proxyObjectCapsuleCollider, _rhinoxBone.BoneCollisionCapsules[0]);
+                _proxyObjectCapsuleCollider = _kinematicProxyObject.AddComponent<CapsuleCollider>();
+                GrappleUtils.CopyCapsuleColliderValues(_proxyObjectCapsuleCollider, _rhinoxBone.BoneCollisionCapsules[0]); 
                 _proxyObjectCapsuleCollider.isTrigger = false;
                 _proxyObjectCapsuleCollider.enabled = true;
 
@@ -137,22 +114,15 @@ namespace Rhinox.Grappler.HandPhysics
                     boneCollisionCapsule.isTrigger = true;
                 }
 
-                _proxyObjectRigidBody = _proxyObject.AddComponent<Rigidbody>();
-                _proxyObjectRigidBody.isKinematic = false;
+                _proxyObjectRigidBody = _kinematicProxyObject.AddComponent<Rigidbody>();
+                _proxyObjectRigidBody.isKinematic = true;
                 _proxyObjectRigidBody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
-                _proxyObjectRigidBody.ResetInertiaTensor();
 
-                _connectionJoint = _proxyObject.AddComponent<FixedJoint>();
-                _connectionJoint.connectedBody = _dummyObjectRigidBody;
-                _connectionJoint.autoConfigureConnectedAnchor = false;
-                _connectionJoint.enablePreprocessing = false;
-                _connectionJoint.connectedAnchor = new Vector3(0, 0, 0);
-
-                _eventHandler = _proxyObject.AddComponent<ProxyPhysicsProxyCollisionEventHandler>();
+                _eventHandler = _kinematicProxyObject.AddComponent<ProxyPhysicsProxyCollisionEventHandler>();
                 _eventHandler.Initialise(_handedness);
 
                 // re-enable object to enable physics
-                _proxyObject.SetActive(true);
+                _kinematicProxyObject.SetActive(true);
             }
 
             public void Update()
@@ -162,33 +132,29 @@ namespace Rhinox.Grappler.HandPhysics
 
                 if (_gracePeriodTimer > 0.0f)
                 {
-                    _proxyObject.SetActive(false);
+                    _kinematicProxyObject.SetActive(false);
                     _gracePeriodTimer -= Time.deltaTime;
                     return;
                 }
 
-                _proxyObject.SetActive(_dummyObject.activeInHierarchy);
+                _kinematicProxyObject.SetActive(_dummyObject.activeInHierarchy);
+                _kinematicProxyObject.transform.position = (_dummyObject.transform.position);
+                _kinematicProxyObject.transform.rotation = (_dummyObject.transform.rotation);
 
-                if (_dummyObject.activeInHierarchy == true && _prevState == false)
-                {
-                    Rebuild();
-                }
+
                 _prevState = _dummyObject.activeInHierarchy;
             }
 
-
-            // TODO, check how prevstate changes in the code flow, it is being set multiple times
             public void SetEnabled(bool newState)
             {
                 if (newState == _prevState)
                     return;
 
-                if (!newState)
-                    Destroy();
-                else
-                {
-                    Rebuild();
-                }
+                // reset grace period
+                if(newState == true)
+                    _gracePeriodTimer = _gracePeriod;
+
+                _kinematicProxyObject.SetActive(newState);
                 _prevState = newState;
             }
 
@@ -201,16 +167,16 @@ namespace Rhinox.Grappler.HandPhysics
                     layerVal = layerVal >> 1;
                     layerNumber++;
                 }
-                _proxyObject.layer = layerNumber - 1;
+                _kinematicProxyObject.layer = layerNumber - 1;
             }
         }
 
         private bool _isInitialised = false;
 
-        private List<ProxyObject> _leftHandProxyObjects = new List<ProxyObject>();
+        private List<KinematicProxyObject> _leftHandProxyObjects = new List<KinematicProxyObject>();
         private bool _isLeftHandEnabled = false;
 
-        private List<ProxyObject> _rightHandProxyObjects = new List<ProxyObject>();
+        private List<KinematicProxyObject> _rightHandProxyObjects = new List<KinematicProxyObject>();
         private bool _isRightHandEnabled = false;
 
 
@@ -221,13 +187,13 @@ namespace Rhinox.Grappler.HandPhysics
             List<RhinoxBone> leftHandBones = boneManager.GetRhinoxBones(Hand.Left);
             foreach (var Bone in leftHandBones)
             {
-                _leftHandProxyObjects.Add(new ProxyObject(Bone, Hand.Left, _handLayer));
+                _leftHandProxyObjects.Add(new KinematicProxyObject(Bone, Hand.Left, _handLayer));
             }
 
             List<RhinoxBone> rightHandBones = boneManager.GetRhinoxBones(Hand.Right);
             foreach (var Bone in rightHandBones)
             {
-                _rightHandProxyObjects.Add(new ProxyObject(Bone, Hand.Right, _handLayer));
+                _rightHandProxyObjects.Add(new KinematicProxyObject(Bone, Hand.Right, _handLayer));
             }
             _isInitialised = true;
         }
@@ -306,4 +272,3 @@ namespace Rhinox.Grappler.HandPhysics
         }
     }
 }
-
