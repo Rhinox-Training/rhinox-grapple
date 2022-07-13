@@ -9,6 +9,8 @@ namespace Rhinox.Grappler.HandPhysics
 {
     public class ProxyPhysics : BasePhysicsService
     {
+        private static GameObject _proxyParentObject = null;
+
         private class ProxyObject
         {
             // settings
@@ -34,6 +36,8 @@ namespace Rhinox.Grappler.HandPhysics
 
             private Joint _connectionJoint = null;
 
+            private ProxyPhysics _physXSolution = null;
+
 
             /// <summary>
             /// The proxy object class is there to handle the dummy and proxy object,
@@ -41,12 +45,20 @@ namespace Rhinox.Grappler.HandPhysics
             /// </summary>
             /// <param name="bone"></param>
             /// <param name="collisionLayer"></param>
-            public ProxyObject(RhinoxBone bone, Hand handedness, LayerMask collisionLayer)
+            public ProxyObject(RhinoxBone bone, Hand handedness, LayerMask collisionLayer, ProxyPhysics physXSolution)
             {
+                if (_proxyParentObject == null)
+                {
+                    _proxyParentObject = new GameObject("[GENERATED]ProxyParent");
+                }
+                _physXSolution = physXSolution;
+
                 _rhinoxBone = bone;
                 _collisionLayer = collisionLayer;
                 _handedness = handedness;
                 _proxyObject = new GameObject("ProxyObject_" + _rhinoxBone.Name);
+                _proxyObject.transform.parent = _proxyParentObject.transform;
+
                 _dummyObject = new GameObject("DummyObject_" + _rhinoxBone.Name);
                 Initialise();
             }
@@ -72,10 +84,17 @@ namespace Rhinox.Grappler.HandPhysics
                 if (_rhinoxBone.BoneCollisionCapsules.Count <= 0)
                     return;
 
+                if (_proxyParentObject == null)
+                {
+                    _proxyParentObject = new GameObject("[GENERATED]ProxyParent");
+                }
+
+
                 Debug.Log("Rebuilding");
 
                 GameObject.Destroy(_proxyObject);
                 _proxyObject = new GameObject("ProxyObject_" + _rhinoxBone.Name);
+                _proxyObject.transform.parent = _proxyParentObject.transform;
                 _proxyObject.SetActive(false);
 
                 _gracePeriodTimer = _gracePeriod;
@@ -149,7 +168,7 @@ namespace Rhinox.Grappler.HandPhysics
                 _connectionJoint.connectedAnchor = new Vector3(0, 0, 0);
 
                 _eventHandler = _proxyObject.AddComponent<ProxyPhysicsProxyCollisionEventHandler>();
-                _eventHandler.Initialise(_handedness);
+                _eventHandler.Initialise(_handedness, _physXSolution._allowTriggersForTouchEvents);
 
                 // re-enable object to enable physics
                 _proxyObject.SetActive(true);
@@ -205,6 +224,9 @@ namespace Rhinox.Grappler.HandPhysics
             }
         }
 
+        [Header("Settings")]
+        public bool _allowTriggersForTouchEvents = false;
+
         private bool _isInitialised = false;
 
         private List<ProxyObject> _leftHandProxyObjects = new List<ProxyObject>();
@@ -221,13 +243,13 @@ namespace Rhinox.Grappler.HandPhysics
             List<RhinoxBone> leftHandBones = boneManager.GetRhinoxBones(Hand.Left);
             foreach (var Bone in leftHandBones)
             {
-                _leftHandProxyObjects.Add(new ProxyObject(Bone, Hand.Left, _handLayer));
+                _leftHandProxyObjects.Add(new ProxyObject(Bone, Hand.Left, _handLayer,this));
             }
 
             List<RhinoxBone> rightHandBones = boneManager.GetRhinoxBones(Hand.Right);
             foreach (var Bone in rightHandBones)
             {
-                _rightHandProxyObjects.Add(new ProxyObject(Bone, Hand.Right, _handLayer));
+                _rightHandProxyObjects.Add(new ProxyObject(Bone, Hand.Right, _handLayer,this));
             }
             _isInitialised = true;
         }
