@@ -13,6 +13,8 @@ namespace Rhinox.Grappler.HandPhysics
 {
     public class KinematicProxyPhysics : BasePhysicsService
     {
+        private static GameObject _proxyParentObject = null;
+
         private class KinematicProxyObject
         {
             // settings
@@ -36,18 +38,28 @@ namespace Rhinox.Grappler.HandPhysics
             private CapsuleCollider _dummyObjectCapsuleCollider = null;
             private Rigidbody _dummyObjectRigidBody = null;
 
+            private KinematicProxyPhysics _physXSolution = null;
+
             /// <summary>
             /// The KinematicProxy object class is there to handle the dummy and proxy object,
             /// handles the creation and management of them
             /// </summary>
             /// <param name="bone"></param>
             /// <param name="collisionLayer"></param>
-            public KinematicProxyObject(RhinoxBone bone, Hand handedness, LayerMask collisionLayer)
+            public KinematicProxyObject(RhinoxBone bone, Hand handedness, LayerMask collisionLayer, KinematicProxyPhysics physXSolution)
             {
+                if (_proxyParentObject == null)
+                {
+                    _proxyParentObject = new GameObject("[GENERATED]KinematicProxyParent");
+                }
+                _physXSolution = physXSolution;
+
                 _rhinoxBone = bone;
                 _collisionLayer = collisionLayer;
                 _handedness = handedness;
                 _kinematicProxyObject = new GameObject("ProxyObject_" + _rhinoxBone.Name);
+                _kinematicProxyObject.transform.parent = _proxyParentObject.transform;
+
                 _dummyObject = new GameObject("DummyObject_" + _rhinoxBone.Name);
                 Initialise();
             }
@@ -119,7 +131,7 @@ namespace Rhinox.Grappler.HandPhysics
                 _proxyObjectRigidBody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
 
                 _eventHandler = _kinematicProxyObject.AddComponent<ProxyPhysicsProxyCollisionEventHandler>();
-                _eventHandler.Initialise(_handedness);
+                _eventHandler.Initialise(_handedness, _physXSolution._allowTriggersForTouchEvents);
 
                 // re-enable object to enable physics
                 _kinematicProxyObject.SetActive(true);
@@ -171,6 +183,9 @@ namespace Rhinox.Grappler.HandPhysics
             }
         }
 
+        [Header("Settings")]
+        public bool _allowTriggersForTouchEvents = false;
+
         private bool _isInitialised = false;
 
         private List<KinematicProxyObject> _leftHandProxyObjects = new List<KinematicProxyObject>();
@@ -187,13 +202,13 @@ namespace Rhinox.Grappler.HandPhysics
             List<RhinoxBone> leftHandBones = boneManager.GetRhinoxBones(Hand.Left);
             foreach (var Bone in leftHandBones)
             {
-                _leftHandProxyObjects.Add(new KinematicProxyObject(Bone, Hand.Left, _handLayer));
+                _leftHandProxyObjects.Add(new KinematicProxyObject(Bone, Hand.Left, _handLayer,this));
             }
 
             List<RhinoxBone> rightHandBones = boneManager.GetRhinoxBones(Hand.Right);
             foreach (var Bone in rightHandBones)
             {
-                _rightHandProxyObjects.Add(new KinematicProxyObject(Bone, Hand.Right, _handLayer));
+                _rightHandProxyObjects.Add(new KinematicProxyObject(Bone, Hand.Right, _handLayer,this));
             }
             _isInitialised = true;
         }
