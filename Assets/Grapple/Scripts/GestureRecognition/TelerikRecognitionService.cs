@@ -99,6 +99,9 @@ namespace Rhinox.Grappler.Recognition
         private Telerik.Unity.XR.Rig.Tracking.TrackingHandPose _leftTrackingHand;
         private Telerik.Unity.XR.Rig.Tracking.TrackingHandPose _rightTrackingHand;
 
+        [Header("DEBUG")]
+        [SerializeField] private bool _enableDebug = false;
+
         /// <summary>
         ///  initialises the recognition service whilst checking if the correct bone service is in place to facilitate the services funcrtionality
         ///  it also gets the tracking hands for telerik pinch recognition
@@ -263,6 +266,15 @@ namespace Rhinox.Grappler.Recognition
 
         private void HandleTelerikPinchRecognition(ref List<TelerikPinchGesture> pinchGestures, Telerik.Unity.XR.Rig.Tracking.TrackingHandPose trackingHand , Hand handedness)
         {
+            if (_enableDebug)
+            {
+                Debug.Log(handedness.ToString() + "Hand -> \nThumb:" + trackingHand.thumb.open + "\n" +
+                    "Index  :" + trackingHand.indexFinger.open + "\n" +
+                    "Middle :" + trackingHand.middleFinger.open + "\n" +
+                    "Ring   :" + trackingHand.ringFinger.open + "\n" +
+                    "Pinky  :" + trackingHand.pinkyFinger.open + "\n");
+            }
+
             foreach (var pinchGesture in pinchGestures)
             {
                 if (pinchGesture.CheckThumb && ((trackingHand.thumb.open > pinchGesture.ThumbPinchMaxTreshhold) || (trackingHand.thumb.open <= pinchGesture.ThumbPinchMinTreshhold)))
