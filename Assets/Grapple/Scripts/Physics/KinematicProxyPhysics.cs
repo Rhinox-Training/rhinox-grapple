@@ -13,7 +13,7 @@ namespace Rhinox.Grappler.HandPhysics
 {
     public class KinematicProxyPhysics : BasePhysicsService
     {
-        private static GameObject _proxyParentObject = null;
+        protected static GameObject _proxyParentObject = null;
 
         private class KinematicProxyObject
         {

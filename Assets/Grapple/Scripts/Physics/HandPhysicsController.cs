@@ -7,7 +7,6 @@ using UnityEngine;
 
 namespace Rhinox.Grappler
 {
-
     public class HandPhysicsController : MonoBehaviour
     {
         [Header("Physics Resolvers")]
@@ -37,6 +36,12 @@ namespace Rhinox.Grappler
             SetupBoneManager();
         }
 
+        private void ReSetup()
+        {
+            IsInitialised = false;
+            SetupBoneManager();
+        }
+
         private void SetupBoneManager()
         {
             _boneManager = this.GetComponent<BoneManagement.BoneManager>();
@@ -58,14 +63,18 @@ namespace Rhinox.Grappler
 
         private void SetupPhysicServices()
         {
+            // setup all physics services
             foreach (var physicsService in PhysicsServices)
             {
                 physicsService.SetHandLayer(_handLayer);
                 physicsService.Initialise(_boneManager, this);
                 physicsService.SetEnabled(false, BoneManagement.Hand.Both);
-
             }
-            PhysicsServices[1].SetEnabled(true, BoneManagement.Hand.Both);
+            
+            // activate the first service if it exists as default
+            if(PhysicsServices.Count > 0)
+                PhysicsServices[0].SetEnabled(true, BoneManagement.Hand.Both);
+
             IsInitialised = true;
         }
 
@@ -89,9 +98,8 @@ namespace Rhinox.Grappler
 #endif
 
 #if USING_TELERIK
-            _boneManager.SetBoneConvertorService(new BoneManagement.TelerikBoneService());
+            
 #endif
-
             MaterialService?.Initialise(_boneManager,this);
         }
 
