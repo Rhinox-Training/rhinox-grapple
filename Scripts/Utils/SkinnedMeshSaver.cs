@@ -8,6 +8,8 @@ using UnityEngine;
 /// This is a tool to create baked meshes from skinned meshes to create them into prefabs.
 /// This script is mainly used to create a baked mesh from a hand position to use later and is not intended for actual runtime use
 /// </summary>
+/// 
+#if UNITY_EDITOR
 public class SkinnedMeshSaver : MonoBehaviour
 {
     [SerializeField] private bool _bakeMesh = false;
@@ -29,3 +31,5 @@ public class SkinnedMeshSaver : MonoBehaviour
     }
 
 }
+
+#endif
