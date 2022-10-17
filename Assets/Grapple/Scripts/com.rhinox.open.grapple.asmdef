@@ -4,7 +4,8 @@
     "references": [
         "com.rhinox.open.lightspeed",
         "Telerik.Unity.XRCore",
-        "Telerik.Unity.XRInteractions"
+        "Telerik.Unity.XRInteractions",
+        "Oculus.VR"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
