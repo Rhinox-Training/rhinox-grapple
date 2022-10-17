@@ -92,14 +92,6 @@ namespace Rhinox.Grappler
 
         private void SetupMaterialManagement()
         {
-
-#if USING_OVR
-            MaterialService = new MaterialManagement.OculusMaterialService();
-#endif
-
-#if USING_TELERIK
-            
-#endif
             MaterialService?.Initialise(_boneManager,this);
         }
 
