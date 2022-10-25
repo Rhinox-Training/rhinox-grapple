@@ -237,11 +237,11 @@ namespace Rhinox.Grappler.Recognition
                     if (_currentGestureLeftHand != base._previousGestureLeftHand)
                     {
                         base.OnLeftHandGestureRecognised?.Invoke();
-                        _currentGestureLeftHand.onRecognised?.Invoke();
-                        base._previousGestureLeftHand.onUnRecognised?.Invoke();
+                        _currentGestureLeftHand?.onRecognised?.Invoke();
+                        base._previousGestureLeftHand?.onUnRecognised?.Invoke();
                     }
 
-                    if (_currentGestureLeftHand.name == null)
+                    if (_currentGestureLeftHand?.name == null)
                         return;
                     base._previousGestureLeftHand = _currentGestureLeftHand;
                     break;
@@ -250,14 +250,9 @@ namespace Rhinox.Grappler.Recognition
                     if (_currentGestureRightHand != base._previousGestureRightHand)
                     {
                         base.OnRightHandGestureRecognised?.Invoke();
-                        _currentGestureRightHand.onRecognised?.Invoke();
-                        base._previousGestureRightHand.onUnRecognised?.Invoke();
+                        _currentGestureRightHand?.onRecognised?.Invoke();
+                        base._previousGestureRightHand?.onUnRecognised?.Invoke();
                     }
-
-                    if (_currentGestureRightHand.name == null)
-                        return;
-
-
                     base._previousGestureRightHand = _currentGestureRightHand;
                     break;
             }
