@@ -38,8 +38,8 @@ namespace Rhinox.Grappler.MeshBaking
             }
 
             // retreive the skinned meshes
-            _leftHandSkinnedMesh = _unityBoneService.GetOculusSkeleton(Hand.Left).gameObject.GetComponent<SkinnedMeshRenderer>();
-            _rightHandSkinnedMesh = _unityBoneService.GetOculusSkeleton(Hand.Right).gameObject.GetComponent<SkinnedMeshRenderer>();
+            _leftHandSkinnedMesh = _unityBoneService.GetOculusSkeleton(Hand.Left).gameObject.GetComponentInChildren<SkinnedMeshRenderer>();
+            _rightHandSkinnedMesh = _unityBoneService.GetOculusSkeleton(Hand.Right).gameObject.GetComponentInChildren<SkinnedMeshRenderer>();
 
             _isInitialised = true;
         }
@@ -53,7 +53,6 @@ namespace Rhinox.Grappler.MeshBaking
             switch (handedness)
             {
                 case Hand.Left:
-                    _leftHandSkinnedMesh.GetComponent<OVRMeshRenderer>().enabled = false;
                     _leftHandSkinnedMesh.enabled = false;
 
                     _leftHandBakedObj = new GameObject("LeftHandBakedMesh");
@@ -69,7 +68,6 @@ namespace Rhinox.Grappler.MeshBaking
 
                     break;
                 case Hand.Right:
-                    _rightHandSkinnedMesh.GetComponent<OVRMeshRenderer>().enabled = false;
                     _rightHandSkinnedMesh.enabled = false;
 
                     _rightHandBakedObj = new GameObject("RightHandBakedMesh");
@@ -118,21 +116,17 @@ namespace Rhinox.Grappler.MeshBaking
             switch (handedness)
             {
                 case Hand.Left:
-                    _leftHandSkinnedMesh.GetComponent<OVRMeshRenderer>().enabled = true;
                     _leftHandSkinnedMesh.enabled = true;
                     GameObject.Destroy(_leftHandBakedObj);
                     break;
                 case Hand.Right:
-                    _rightHandSkinnedMesh.GetComponent<OVRMeshRenderer>().enabled = true;
                     _rightHandSkinnedMesh.enabled = true;
                     GameObject.Destroy(_rightHandBakedObj);
                     break;
                 case Hand.Both:
-                    _leftHandSkinnedMesh.GetComponent<OVRMeshRenderer>().enabled = true;
                     _leftHandSkinnedMesh.enabled = true;
                     GameObject.Destroy(_leftHandBakedObj);
 
-                    _rightHandSkinnedMesh.GetComponent<OVRMeshRenderer>().enabled = true;
                     _rightHandSkinnedMesh.enabled = true;
                     GameObject.Destroy(_rightHandBakedObj);
                     break;
