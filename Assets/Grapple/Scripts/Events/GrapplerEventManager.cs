@@ -5,6 +5,11 @@ using UnityEngine.Events;
 
 namespace Rhinox.Grappler.EventManagement
 {
+    /// <summary>
+    /// arg0: Sender
+    /// arg1: Receiver
+    /// arg2: handedness
+    /// </summary>
     public sealed class GrappleEvent : UnityEvent<GameObject, GameObject, BoneManagement.Hand>
     {}
 
