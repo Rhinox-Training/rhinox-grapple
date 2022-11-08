@@ -171,6 +171,7 @@ namespace Rhinox.Grappler.HandPhysics
                     {
                         _controller.MeshBakingService.BakeMesh(Hand.Left, contactObject);
                         LeftHandConnectedObject = contactObject;
+                        LeftHandConnectedObject.GetComponent<Rigidbody>().isKinematic = false;
                         LeftHandConnectedObject.GetComponent<Rigidbody>().useGravity = false;
                         LeftHandConnectedObject.GetComponent<Rigidbody>().drag = 10;
 
@@ -228,6 +229,7 @@ namespace Rhinox.Grappler.HandPhysics
                     if (LeftHandConnections <= 0)
                     {
                         _controller.MeshBakingService.RemoveMesh(Hand.Left);
+                        LeftHandConnectedObject.GetComponent<Rigidbody>().isKinematic = true;
                         LeftHandConnectedObject.GetComponent<Rigidbody>().useGravity = true;
                         LeftHandConnectedObject.GetComponent<Rigidbody>().drag = 0;
                         GrapplerEventManager.Instance?.OnDrop?.Invoke(_contactPoint, LeftHandConnectedObject, Hand.Left);
@@ -394,23 +396,23 @@ namespace Rhinox.Grappler.HandPhysics
                 case Hand.Left:
                     foreach (var sensor in _leftHandedSensorObjects)
                     {
-                        sensor.ContactPoint.Break();
+                        sensor.ContactPoint?.Break();
                     }
                     break;
                 case Hand.Right:
                     foreach (var sensor in _rightHandedSensorObjects)
                     {
-                        sensor.ContactPoint.Break();
+                        sensor.ContactPoint?.Break();
                     }
                     break;
                 case Hand.Both:
                     foreach (var sensor in _leftHandedSensorObjects)
                     {
-                        sensor.ContactPoint.Break();
+                        sensor.ContactPoint?.Break();
                     }
                     foreach (var sensor in _rightHandedSensorObjects)
                     {
-                        sensor.ContactPoint.Break();
+                        sensor.ContactPoint?.Break();
                     }
                     break;
             }
