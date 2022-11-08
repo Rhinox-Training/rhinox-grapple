@@ -196,6 +196,7 @@ namespace Rhinox.Grappler.HandPhysics
                     {
                         _controller.MeshBakingService.BakeMesh(Hand.Right, contactObject);
                         rightHandConnectedObject = contactObject;
+                        rightHandConnectedObject.GetComponent<Rigidbody>().isKinematic = false;
                         rightHandConnectedObject.GetComponent<Rigidbody>().useGravity = false;
                         rightHandConnectedObject.GetComponent<Rigidbody>().drag = 10;
 
@@ -245,6 +246,7 @@ namespace Rhinox.Grappler.HandPhysics
                     if (RightHandConnections <= 0)
                     {
                         _controller.MeshBakingService.RemoveMesh(Hand.Right);
+                        rightHandConnectedObject.GetComponent<Rigidbody>().isKinematic = true;
                         rightHandConnectedObject.GetComponent<Rigidbody>().useGravity = true;
                         rightHandConnectedObject.GetComponent<Rigidbody>().drag = 0;
                         GrapplerEventManager.Instance?.OnDrop?.Invoke(_contactPoint, rightHandConnectedObject, Hand.Right);
