@@ -17,26 +17,23 @@ namespace Rhinox.Grappler.Recognition
 
         public override bool Equals(object obj)
         {
-            if (obj == null || GetType() != obj.GetType())
-            {
-                return false;
-            }
-
-            if (fingerPositions == null)
-                return false;
-
             var objectToCompareWith = (RhinoxGesture)obj;
 
-            if (objectToCompareWith.name == null)
+            // are we dealing with two null gestures?
+            if (fingerPositions == null && objectToCompareWith.fingerPositions == null)
+                return true;
+
+            // is one of them null?
+            if (fingerPositions == null || objectToCompareWith.fingerPositions == null)
                 return false;
 
-            if (fingerPositions.Count != objectToCompareWith.fingerPositions.Count)
-                return false;
-
-            for (int i = 0; i < fingerPositions.Count; i++)
-                if (fingerPositions[i] != objectToCompareWith.fingerPositions[i])
-                    return false;
-
+            // are the finger positions correct?
+            if (fingerPositions.Count == objectToCompareWith.fingerPositions.Count)
+            {
+                for (int i = 0; i < fingerPositions.Count; i++)
+                    if (fingerPositions[i] != objectToCompareWith.fingerPositions[i])
+                        return false;
+            }
             return true;
         }
 
@@ -67,11 +64,11 @@ namespace Rhinox.Grappler.Recognition
         public List<RhinoxGesture> RightHandGestures;
 
 
-        [HideInInspector] public RhinoxGesture _previousGestureLeftHand = new RhinoxGesture();
-        [HideInInspector] public RhinoxGesture _currentGestureLeftHand = new RhinoxGesture();
+        [HideInInspector] public RhinoxGesture? _previousGestureLeftHand = null;
+        [HideInInspector] public RhinoxGesture? _currentGestureLeftHand = null;
 
-        [HideInInspector] public RhinoxGesture _previousGestureRightHand = new RhinoxGesture();
-        [HideInInspector] public RhinoxGesture _currentGestureRightHand = new RhinoxGesture();
+        [HideInInspector] public RhinoxGesture? _previousGestureRightHand = null;
+        [HideInInspector] public RhinoxGesture? _currentGestureRightHand = null;
 
         public UnityEvent OnLeftHandGestureRecognised = new UnityEvent();
         public UnityEvent OnRightHandGestureRecognised = new UnityEvent();

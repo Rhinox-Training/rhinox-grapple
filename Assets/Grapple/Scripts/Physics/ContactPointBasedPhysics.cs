@@ -5,6 +5,7 @@ using UnityEngine;
 using Rhinox.Grappler.BoneManagement;
 using System;
 using System.Linq;
+using Rhinox.Grappler.EventManagement;
 
 namespace Rhinox.Grappler.HandPhysics
 {
@@ -26,7 +27,7 @@ namespace Rhinox.Grappler.HandPhysics
 
             public bool IsInitialised { get; private set; } = false;
             public bool IsEnabled { get; set; } = false;
-
+            public ContactPoint ContactPoint { get => _contactPoint; set => _contactPoint = value; }
 
             private RhinoxBone _rhinoxBone = null;
             private LayerMask _collisionLayer = 0;
@@ -56,9 +57,9 @@ namespace Rhinox.Grappler.HandPhysics
 
             public void Update()
             {
-                if (!IsEnabled && _contactPoint != null)
+                if (!IsEnabled && ContactPoint != null)
                 {
-                    _contactPoint.Break();
+                    ContactPoint.Break();
                 }
                 else if (!IsEnabled)
                     return;
@@ -67,7 +68,7 @@ namespace Rhinox.Grappler.HandPhysics
                 if (_rhinoxBone.BoneCollisionCapsules.Count <= 0)
                     return;
 
-                if (_contactPoint == null)
+                if (ContactPoint == null)
                     FindContactPoint();
                 else
                     HandleContactPoint();
@@ -75,8 +76,8 @@ namespace Rhinox.Grappler.HandPhysics
 
             public GameObject GetConnectedObject()
             {
-                if (_contactPoint != null)
-                    return _contactPoint.GetContactObject();
+                if (ContactPoint != null)
+                    return ContactPoint.GetContactObject();
                 else return null;
             }
 
@@ -113,7 +114,7 @@ namespace Rhinox.Grappler.HandPhysics
                             Debug.Log("HIT: " + collision.gameObject);
                             
                             // create the contact point
-                            _contactPoint = new ContactPoint(collision.gameObject, _handedness, collision.ClosestPoint(origin));
+                            ContactPoint = new ContactPoint(collision.gameObject, _handedness, collision.ClosestPoint(origin));
                             return;
                         }
                     }
@@ -122,20 +123,20 @@ namespace Rhinox.Grappler.HandPhysics
             private void HandleContactPoint()
             {
                 var origin = GetCapsuleColliderOrigin();
-                var distance = Vector3.Distance(origin, _contactPoint.getContactPosition());
+                var distance = Vector3.Distance(origin, ContactPoint.getContactPosition());
 
                 // check if the contact should break according to distance
                 if (distance > _breakDistance)
                 {
-                    _contactPoint.Break();
-                    _contactPoint = null;
+                    ContactPoint.Break();
+                    ContactPoint = null;
                     return;
                 }
                 // calculate amount of force depending on distance from contactpoint to realpoint
-                Vector3 delta = origin - _contactPoint.getContactPosition();
+                Vector3 delta = origin - ContactPoint.getContactPosition();
 
                 // apply the force at the point of the contactpoint to the picked up object
-                _contactPoint.EmitForce(delta * (distance * _forceMultiplier));
+                ContactPoint.EmitForce(delta * (distance * _forceMultiplier));
             }
 
             private Vector3 GetCapsuleColliderOrigin(int idx = 0)
@@ -161,7 +162,7 @@ namespace Rhinox.Grappler.HandPhysics
                     if (LeftHandConnectedObject != null && LeftHandConnectedObject != contactObject)
                         return;
 
-                    // prevents grabbing an object already grabbed
+                    // prevents grabbing an objecct already grabbed
                     if (contactObject == rightHandConnectedObject)
                         return;
 
@@ -170,8 +171,11 @@ namespace Rhinox.Grappler.HandPhysics
                     {
                         _controller.MeshBakingService.BakeMesh(Hand.Left, contactObject);
                         LeftHandConnectedObject = contactObject;
+                        LeftHandConnectedObject.GetComponent<Rigidbody>().isKinematic = false;
                         LeftHandConnectedObject.GetComponent<Rigidbody>().useGravity = false;
                         LeftHandConnectedObject.GetComponent<Rigidbody>().drag = 10;
+
+                        GrapplerEventManager.Instance?.OnGrab?.Invoke(_contactPoint, LeftHandConnectedObject, Hand.Left);
                     }
                 }
                 else
@@ -192,8 +196,11 @@ namespace Rhinox.Grappler.HandPhysics
                     {
                         _controller.MeshBakingService.BakeMesh(Hand.Right, contactObject);
                         rightHandConnectedObject = contactObject;
+                        rightHandConnectedObject.GetComponent<Rigidbody>().isKinematic = false;
                         rightHandConnectedObject.GetComponent<Rigidbody>().useGravity = false;
                         rightHandConnectedObject.GetComponent<Rigidbody>().drag = 10;
+
+                        GrapplerEventManager.Instance?.OnGrab?.Invoke(_contactPoint, rightHandConnectedObject, Hand.Right);
                     }
                 }
 
@@ -223,8 +230,10 @@ namespace Rhinox.Grappler.HandPhysics
                     if (LeftHandConnections <= 0)
                     {
                         _controller.MeshBakingService.RemoveMesh(Hand.Left);
+                        LeftHandConnectedObject.GetComponent<Rigidbody>().isKinematic = true;
                         LeftHandConnectedObject.GetComponent<Rigidbody>().useGravity = true;
                         LeftHandConnectedObject.GetComponent<Rigidbody>().drag = 0;
+                        GrapplerEventManager.Instance?.OnDrop?.Invoke(_contactPoint, LeftHandConnectedObject, Hand.Left);
                         LeftHandConnectedObject = null;
                     }
                 }
@@ -237,8 +246,10 @@ namespace Rhinox.Grappler.HandPhysics
                     if (RightHandConnections <= 0)
                     {
                         _controller.MeshBakingService.RemoveMesh(Hand.Right);
+                        rightHandConnectedObject.GetComponent<Rigidbody>().isKinematic = true;
                         rightHandConnectedObject.GetComponent<Rigidbody>().useGravity = true;
                         rightHandConnectedObject.GetComponent<Rigidbody>().drag = 0;
+                        GrapplerEventManager.Instance?.OnDrop?.Invoke(_contactPoint, rightHandConnectedObject, Hand.Right);
                         rightHandConnectedObject = null;
                     }
                 }              
@@ -314,6 +325,8 @@ namespace Rhinox.Grappler.HandPhysics
                     return _isLeftHandEnabled;
                 case Hand.Right:
                     return _isRightHandEnabled;
+                case Hand.Both:
+                    return _isLeftHandEnabled && _isRightHandEnabled;
             }
             return false;
 
@@ -376,6 +389,35 @@ namespace Rhinox.Grappler.HandPhysics
             joint.angularXMotion = ConfigurableJointMotion.Locked;
             joint.angularYMotion = ConfigurableJointMotion.Locked;
             joint.angularZMotion = ConfigurableJointMotion.Locked;
+        }
+
+        public void BreakContacts(Hand hand)
+        {
+            switch (hand)
+            {
+                case Hand.Left:
+                    foreach (var sensor in _leftHandedSensorObjects)
+                    {
+                        sensor.ContactPoint?.Break();
+                    }
+                    break;
+                case Hand.Right:
+                    foreach (var sensor in _rightHandedSensorObjects)
+                    {
+                        sensor.ContactPoint?.Break();
+                    }
+                    break;
+                case Hand.Both:
+                    foreach (var sensor in _leftHandedSensorObjects)
+                    {
+                        sensor.ContactPoint?.Break();
+                    }
+                    foreach (var sensor in _rightHandedSensorObjects)
+                    {
+                        sensor.ContactPoint?.Break();
+                    }
+                    break;
+            }
         }
 
         public override void ManualUpdate()
