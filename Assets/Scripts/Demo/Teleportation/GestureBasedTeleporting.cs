@@ -83,10 +83,7 @@ public class GestureBasedTeleporting : MonoBehaviour
         // there is no countdown for a teleport sequence
         if (_teleportCountDownCoroutine == null)
         {
-            int polarity = 0;
-            if (_handedness == Hand.Left)
-                polarity = -1;
-            else polarity = 1;
+            int polarity = _handedness == Hand.Left ? -1 : 1;
 
             _lr.enabled = true;
             RaycastHit hit;
@@ -95,10 +92,21 @@ public class GestureBasedTeleporting : MonoBehaviour
             {
                 _teleportLocation = hit.point;
                 // set line renderer to the correct location
-                Vector3[] linePositions = new Vector3[2];
-                linePositions[0] = _raycastOrigin.position;
-                linePositions[1] = _teleportLocation;
-                _lr.SetPositions(linePositions);
+                if (_lr.positionCount != 2)
+                {
+                    Vector3[] linePositions = new Vector3[2]
+                    {
+                        _raycastOrigin.position,
+                        _teleportLocation
+                    };
+                    _lr.SetPositions(linePositions);
+                }
+                else
+                {
+                    _lr.SetPosition(0, _raycastOrigin.position);
+                    _lr.SetPosition(1, _teleportLocation);
+                }
+
                 _lr.startColor = Color.green;
                 _lr.endColor = Color.green;
 
@@ -107,10 +115,20 @@ public class GestureBasedTeleporting : MonoBehaviour
             else
             {
                 // set the line renderer to an arbitrary location as to make it look like a straight line
-                Vector3[] linePositions = new Vector3[2];
-                linePositions[0] = _raycastOrigin.position;
-                linePositions[1] = _raycastOrigin.position + (polarity * _raycastOrigin.right * 50);
-                _lr.SetPositions(linePositions);
+                if (_lr.positionCount != 2)
+                {
+                    Vector3[] linePositions = new Vector3[2];
+                    linePositions[0] = _raycastOrigin.position;
+                    linePositions[1] = _raycastOrigin.position + (polarity * _raycastOrigin.right * 50);
+                    _lr.SetPositions(linePositions);
+                }
+                else
+                {
+                    
+                    _lr.SetPosition(0, _raycastOrigin.position);
+                    _lr.SetPosition(1, _raycastOrigin.position + (polarity * _raycastOrigin.right * 50));
+                }
+
                 _lr.startColor = Color.red;
                 _lr.endColor = Color.red;
 
@@ -149,10 +167,10 @@ public class GestureBasedTeleporting : MonoBehaviour
             switch (_handedness)
             {
                 case Hand.Left:
-                    _confirmTeleportGesture = _recognitionService._currentGestureLeftHand;
+                    _confirmTeleportGesture = _recognitionService._currentGestureLeftHand.Value;
                     break;
                 case Hand.Right:
-                    _confirmTeleportGesture = _recognitionService._currentGestureRightHand;
+                    _confirmTeleportGesture = _recognitionService._currentGestureRightHand.Value;
                     break;
             }
         }
@@ -195,7 +213,7 @@ public class GestureBasedTeleporting : MonoBehaviour
 
             // manage teleport indicator object
             var val = 1 - (_teleportTimer / _teleportTime);
-            Debug.Log(val);
+            //Debug.Log(val);
             circleIndicator.fillAmount = val; 
             _teleportIndicatorObject.transform.position = _teleportLocation;
             yield return null;

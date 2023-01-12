@@ -1,7 +1,7 @@
 {
   "name": "com.rhinox.open.grapple",
   "displayName": "Rhinox Grapple",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "A physics framework for hand tracking applications.",
   "keywords": [
     "Grapple"

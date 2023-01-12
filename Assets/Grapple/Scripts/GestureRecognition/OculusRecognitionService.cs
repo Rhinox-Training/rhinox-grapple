@@ -4,6 +4,7 @@ using Rhinox.Grappler.BoneManagement;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Rhinox.Lightspeed;
 using UnityEngine;
 
 namespace Rhinox.Grappler.Recognition
@@ -41,12 +42,13 @@ namespace Rhinox.Grappler.Recognition
             {
                 var lhgesture = new RhinoxGesture();
                 lhgesture.name = "NEWPOSE";
-                List<Vector3> data = new List<Vector3>();
-                foreach (var bone in _unityBoneService.GetOculusBones(BoneManagement.Hand.Left))
+                List<OVRBone> leftHandBones = _unityBoneService.GetOculusBones(BoneManagement.Hand.Left);
+                for (int i = 0; i < leftHandBones.Count; ++i)
                 {
-                    data.Add(_unityBoneService.GetOculusSkeleton(BoneManagement.Hand.Left).transform.InverseTransformPoint(bone.Transform.position));
+                    var bone = leftHandBones[i];
+                    Vector3 newPos = _unityBoneService.GetOculusSkeleton(BoneManagement.Hand.Left).transform.InverseTransformPoint(bone.Transform.position);
+                    lhgesture.fingerPositions[i] = newPos;
                 }
-                lhgesture.fingerPositions = data;
 
                 base.LeftHandGestures.Add(lhgesture);
 
@@ -58,7 +60,8 @@ namespace Rhinox.Grappler.Recognition
                 var rhgesture = new RhinoxGesture();
                 rhgesture.name = "NEWPOSE";
                 List<Vector3> data = new List<Vector3>();
-                foreach (var bone in _unityBoneService.GetOculusBones(BoneManagement.Hand.Right))
+                List<OVRBone> rightHandBones = _unityBoneService.GetOculusBones(BoneManagement.Hand.Right);
+                foreach (var bone in rightHandBones)
                 {
                     data.Add(_unityBoneService.GetOculusSkeleton(BoneManagement.Hand.Right).transform.InverseTransformPoint(bone.Transform.position));
                 }
@@ -87,17 +90,18 @@ namespace Rhinox.Grappler.Recognition
             {
                 float sumDist = 0;
                 bool isDiscarded = false;
-                for (int i = 0; i < _unityBoneService.GetOculusBones(handedness).Count; i++)
+                var bones = _unityBoneService.GetOculusBones(handedness);
+                for (int i = 0; i < bones.Count; i++)
                 {
-                    Vector3 currdata = skeleton.transform.InverseTransformPoint(_unityBoneService.GetOculusBones(handedness)[i].Transform.position);
-                    float dist = Vector3.Distance(currdata, gesture.fingerPositions[i]);
-                    if (dist > _detectionTreshHold)
+                    Vector3 currdata = skeleton.transform.InverseTransformPoint(bones[i].Transform.position);
+                    float sqrDist = currdata.SqrDistanceTo(gesture.fingerPositions[i]);
+                    if (sqrDist > (_detectionTreshHold * _detectionTreshHold))
                     {
                         isDiscarded = true;
                         break;
                     }
 
-                    sumDist += dist;
+                    sumDist += Mathf.Sqrt(sqrDist);
                 }
 
                 if (!isDiscarded && sumDist < currentMin)
